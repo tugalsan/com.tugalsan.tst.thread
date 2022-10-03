@@ -1,0 +1,4 @@
+--patch-module
+com.tugalsan.tst.pdf=_
+--add-reads
+com.tugalsan.tst.pdf=ALL-UNNAMED
