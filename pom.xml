@@ -34,12 +34,17 @@
             <artifactId>com.tugalsan.api.log</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>com.tugalsan.api.thread</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
-        <exec.mainClass>com.tugalsan.tst.pdf.Main</exec.mainClass>
+        <exec.mainClass>com.tugalsan.tst.thread.Main</exec.mainClass>
     </properties>
     <build>
         <plugins>
