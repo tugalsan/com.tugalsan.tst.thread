@@ -9,6 +9,7 @@ public class Main {
 
     private static TS_Log d = TS_Log.of(Main.class);
 
+    //java --enable-preview --add-modules jdk.incubator.concurrent -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
         TS_ThreadFetchAll<String> f = TS_ThreadFetchAll.of(Instant.now().plusSeconds(5),
                 () -> {
@@ -24,5 +25,6 @@ public class Main {
                     return "3";
                 }
         );
+        f.results
     }
 }

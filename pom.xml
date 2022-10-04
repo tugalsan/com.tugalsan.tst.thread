@@ -81,7 +81,7 @@
                         <arg>--add-modules=jdk.incubator.concurrent</arg>
                     </compilerArgs>
                 </configuration>
-            </plugin>        
+            </plugin>    
         </plugins>
     </build>
 </project>

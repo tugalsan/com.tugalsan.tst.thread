@@ -1,4 +1,4 @@
 --patch-module
-com.tugalsan.tst.pdf=_
+com.tugalsan.tst.thread=_
 --add-reads
-com.tugalsan.tst.pdf=ALL-UNNAMED
+com.tugalsan.tst.thread=ALL-UNNAMED

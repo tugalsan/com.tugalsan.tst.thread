@@ -1,4 +1,4 @@
-module com.tugalsan.tst.pdf {
+module com.tugalsan.tst.thread {
     requires jdk.incubator.concurrent;
     requires gwt.user;
     requires com.tugalsan.api.log;
