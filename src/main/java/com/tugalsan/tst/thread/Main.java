@@ -4,6 +4,7 @@ import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.thread.server.TS_ThreadFetchAll;
 import com.tugalsan.api.thread.server.TS_ThreadFetchFirst;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
+import com.tugalsan.api.unsafe.client.TGS_UnSafe;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -31,22 +32,21 @@ public class Main {
                     d.cr("fetcing...", "3");
                     TS_ThreadWait.seconds(null, 3);
                     d.cr("completed", "3");
+                    TGS_UnSafe.catchMeIfUCan(d.className, "Callable", "3");
                     return "3";
                 }
         );
-        if (false) {
-            TS_ThreadFetchAll.of(
-                    /*Instant.now().plusSeconds(5)*/null,
-                    callables
-            ).resultLst().forEach(result -> d.cr("result", result));
+        if (true) {
+            var fetchAll = TS_ThreadFetchAll.of( /*Instant.now().plusSeconds(5)*/null, callables);
+            fetchAll.resultLst().forEach(result -> d.cr("fetchAll.result", result));
+            d.cr("fetchAll.timeout()", fetchAll.timeout());
+            fetchAll.exceptionLst().forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
         if (true) {
-            d.cr("fetchFirst.result()",
-                    TS_ThreadFetchFirst.of(
-                            /*Instant.now().plusSeconds(5)*/null,
-                            callables
-                    ).result()
-            );
+            var fetchFirst = TS_ThreadFetchFirst.of( /*Instant.now().plusSeconds(5)*/null, callables);
+            d.cr("fetchFirst.result()", fetchFirst.result());
+            d.cr("fetchFirst.timeout()", fetchFirst.timeout());
+            d.cr("fetchFirst.exception()", fetchFirst.exception());
         }
     }
 }
