@@ -25,6 +25,6 @@ public class Main {
                     return "3";
                 }
         );
-        f.results
+        f.resultLst().forEach(result -> d.cr("result", result));
     }
 }
