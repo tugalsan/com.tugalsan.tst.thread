@@ -1,4 +1,0 @@
---patch-module
-com.tugalsan.tst.thread=_
---add-reads
-com.tugalsan.tst.thread=ALL-UNNAMED

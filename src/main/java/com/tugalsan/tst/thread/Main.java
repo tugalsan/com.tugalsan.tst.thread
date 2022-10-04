@@ -5,6 +5,7 @@ import com.tugalsan.api.thread.server.TS_ThreadFetchAll;
 import com.tugalsan.api.thread.server.TS_ThreadFetchFirst;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -37,13 +38,25 @@ public class Main {
                 }
         );
         if (true) {
-            var fetchAll = TS_ThreadFetchAll.of( /*Instant.now().plusSeconds(5)*/null, callables);
+            var fetchAll = TS_ThreadFetchAll.of(null, callables);
             fetchAll.resultLst().forEach(result -> d.cr("fetchAll.result", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptionLst().forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
         if (true) {
-            var fetchFirst = TS_ThreadFetchFirst.of( /*Instant.now().plusSeconds(5)*/null, callables);
+            var fetchAll = TS_ThreadFetchAll.of(Instant.now().plusSeconds(1), callables);
+            fetchAll.resultLst().forEach(result -> d.cr("fetchAll.result", result));
+            d.cr("fetchAll.timeout()", fetchAll.timeout());
+            fetchAll.exceptionLst().forEach(e -> d.cr("fetchAll.e", e.getMessage()));
+        }
+        if (true) {
+            var fetchFirst = TS_ThreadFetchFirst.of(null, callables);
+            d.cr("fetchFirst.result()", fetchFirst.result());
+            d.cr("fetchFirst.timeout()", fetchFirst.timeout());
+            d.cr("fetchFirst.exception()", fetchFirst.exception());
+        }
+        if (true) {
+            var fetchFirst = TS_ThreadFetchFirst.of(Instant.now().plusSeconds(1), callables);
             d.cr("fetchFirst.result()", fetchFirst.result());
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             d.cr("fetchFirst.exception()", fetchFirst.exception());
