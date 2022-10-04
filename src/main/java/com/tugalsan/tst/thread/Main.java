@@ -17,7 +17,7 @@ public class Main {
         List<Callable<String>> callables = List.of(
                 () -> {
                     d.cr("fetcing...", "1");
-                    TS_ThreadWait.seconds(null, 1);
+                    TS_ThreadWait.seconds(null, 10);
                     d.cr("completed", "1");
                     return "1";
                 },
@@ -34,13 +34,13 @@ public class Main {
                     return "3";
                 }
         );
-        if (true) {
+        if (false) {
             TS_ThreadFetchAll.of(
                     /*Instant.now().plusSeconds(5)*/null,
                     callables
             ).resultLst().forEach(result -> d.cr("result", result));
         }
-        if (false) {
+        if (true) {
             d.cr("fetchFirst.result()",
                     TS_ThreadFetchFirst.of(
                             /*Instant.now().plusSeconds(5)*/null,
@@ -48,6 +48,5 @@ public class Main {
                     ).result()
             );
         }
-        TS_ThreadWait.seconds(null, 10);
     }
 }
