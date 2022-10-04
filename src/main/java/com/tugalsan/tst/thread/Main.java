@@ -11,7 +11,7 @@ public class Main {
 
     //java --enable-preview --add-modules jdk.incubator.concurrent -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
-        TS_ThreadFetchAll<String> f = TS_ThreadFetchAll.of(Instant.now().plusSeconds(5),
+        TS_ThreadFetchAll<String> f = TS_ThreadFetchAll.of(/*Instant.now().plusSeconds(5)*/null,
                 () -> {
                     d.cr("fetcing...", "1");//WHY NOT WORKING?
                     TS_ThreadWait.seconds(null, 1);
