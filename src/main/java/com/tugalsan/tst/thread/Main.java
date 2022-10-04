@@ -13,18 +13,24 @@ public class Main {
     public static void main(String... s) {
         TS_ThreadFetchAll<String> f = TS_ThreadFetchAll.of(Instant.now().plusSeconds(5),
                 () -> {
+                    d.cr("fetcing...", "1");//WHY NOT WORKING?
                     TS_ThreadWait.seconds(null, 1);
+                    d.cr("completed", "1");//WHY NOT WORKING?
                     return "1";
                 },
                 () -> {
+                    d.cr("fetcing...", "2");//WHY NOT WORKING?
                     TS_ThreadWait.seconds(null, 2);
+                    d.cr("completed", "2");//WHY NOT WORKING?
                     return "2";
                 },
                 () -> {
+                    d.cr("fetcing...", "3");//WHY NOT WORKING?
                     TS_ThreadWait.seconds(null, 3);
+                    d.cr("completed", "3");//WHY NOT WORKING?
                     return "3";
                 }
         );
-        f.resultLst().forEach(result -> d.cr("result", result));
+        f.resultLst().forEach(result -> d.cr("result", result));//WHY NOT WORKING?
     }
 }
