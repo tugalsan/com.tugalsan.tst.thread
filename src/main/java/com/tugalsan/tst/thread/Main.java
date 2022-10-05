@@ -38,28 +38,36 @@ public class Main {
                 }
         );
         if (true) {
+            d.cr("------- TS_ThreadFetchAll.JOIN -------");
             var fetchAll = TS_ThreadFetchAll.of(null, callables);
             fetchAll.resultLst().forEach(result -> d.cr("fetchAll.result", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptionLst().forEach(e -> d.cr("fetchAll.e", e.getMessage()));
+            d.cr("fetchAll.exceptionPack()", fetchAll.exceptionPack());
         }
         if (true) {
+            d.cr("------- TS_ThreadFetchAll.UNTIL -------");
             var fetchAll = TS_ThreadFetchAll.of(Instant.now().plusSeconds(1), callables);
             fetchAll.resultLst().forEach(result -> d.cr("fetchAll.result", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptionLst().forEach(e -> d.cr("fetchAll.e", e.getMessage()));
+            d.cr("fetchAll.exceptionPack()", fetchAll.exceptionPack());
         }
         if (true) {
+            d.cr("------- TS_ThreadFetchFirst.JOIN -------");
             var fetchFirst = TS_ThreadFetchFirst.of(null, callables);
             d.cr("fetchFirst.result()", fetchFirst.result());
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             d.cr("fetchFirst.exception()", fetchFirst.exception());
+            d.cr("fetchFirst.states()", fetchFirst.states());
         }
         if (true) {
+            d.cr("------- TS_ThreadFetchFirst.UNTIL -------");
             var fetchFirst = TS_ThreadFetchFirst.of(Instant.now().plusSeconds(1), callables);
             d.cr("fetchFirst.result()", fetchFirst.result());
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             d.cr("fetchFirst.exception()", fetchFirst.exception());
+            d.cr("fetchFirst.states()", fetchFirst.states());
         }
     }
 }
