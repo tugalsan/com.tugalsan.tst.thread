@@ -20,22 +20,20 @@ public class Main {
     //java --enable-preview --add-modules jdk.incubator.concurrent -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
 //        scopeTest();
-        threadLocalRandomTest(true);
+        threadLocalRandomTest(false);
     }
 
     public static void threadLocalRandomTest(boolean useThreadLocal) {
+//                    TS_ThreadRun.now(() -> TS_RandomUtils.nextFloat(0, 1));
+//                    TS_ThreadRun.now(() -> TGS_RandomUtils.nextFloat(0, 1));
         IntStream.range(0, 1_000_000).forEach(i -> {
             if (useThreadLocal) {
-                ThreadLocalRandom random = ThreadLocalRandom.current();
                 IntStream.range(0, 100).forEach(j -> {
-//                    TS_ThreadRun.now(() -> TS_RandomUtils.nextFloat(0, 1));
-                    random.nextFloat(1);
+                    ThreadLocalRandom.current().nextFloat(1);
                 });
             } else {
                 IntStream.range(0, 100).forEach(j -> {
-                    Random random = ThreadLocalRandom.current();
-//                    TS_ThreadRun.now(() -> TGS_RandomUtils.nextFloat(0, 1));
-                    random.nextFloat(1);
+                    new Random().nextFloat(1);
                 });
             }
         });
