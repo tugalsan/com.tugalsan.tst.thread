@@ -156,11 +156,12 @@ public class Main {
         if (true) {
             d.cr("------- TS_ThreadFetchValidated.UNTIL -------");
             var fetchValidated = TS_ThreadFetchValidated.of(Instant.now().plusSeconds(60), callables, validators);
-            fetchValidated.resultLst().forEach(result -> d.cr("fetchValidated.result", result));
+            if (fetchValidated.resultLstIfValidated() != null) {
+                fetchValidated.resultLstIfValidated().forEach(result -> d.cr("fetchValidated.result", result));
+            }
             d.cr("fetchValidated.timeout()", fetchValidated.timeout());
             fetchValidated.exceptionLst().forEach(e -> d.cr("fetchValidated.e", e.getMessage()));
             d.cr("fetchValidated.exceptionPack()", fetchValidated.exceptionPack());
-            d.cr("fetchValidated.isValidated()", fetchValidated.isValidated());
             d.cr("fetchValidated.isValidated()", fetchValidated.isValidated());
             fetchValidated.validationErrorLst().forEach(ve -> d.cr("fetchValidated.v", ve.name(), ve.error() == null ? "" : ve.error().getMessage()));
         }
