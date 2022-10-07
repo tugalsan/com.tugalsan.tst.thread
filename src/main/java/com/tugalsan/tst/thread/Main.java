@@ -5,6 +5,7 @@ import com.tugalsan.api.random.client.TGS_RandomUtils;
 import com.tugalsan.api.random.server.TS_RandomUtils;
 import com.tugalsan.api.thread.server.TS_ThreadFetchAll;
 import com.tugalsan.api.thread.server.TS_ThreadFetchFirst;
+import com.tugalsan.api.thread.server.TS_ThreadFetchValidated;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
 import java.time.Instant;
@@ -21,8 +22,8 @@ public class Main {
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.concurrent -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
-//        scopeTest();
-        threadLocalRandomTest();
+        scopeTest();
+//        threadLocalRandomTest();
     }
 
     /*
@@ -90,6 +91,10 @@ public class Main {
     }
 
     public static void scopeTest() {
+        List<Callable<TS_ThreadFetchValidated.ValidationError>> validators = List.of(
+                () -> null,//VALIDATED
+                () -> new TS_ThreadFetchValidated.ValidationError("not validated", null)
+        );
         List<Callable<String>> callables = List.of(
                 () -> {
                     d.cr("fetcing...", "1");
@@ -111,6 +116,7 @@ public class Main {
                     return "3";
                 }
         );
+
         if (true) {
             d.cr("------- TS_ThreadFetchAll.JOIN -------");
             var fetchAll = TS_ThreadFetchAll.of(null, callables);
@@ -119,6 +125,7 @@ public class Main {
             fetchAll.exceptionLst().forEach(e -> d.cr("fetchAll.e", e.getMessage()));
             d.cr("fetchAll.exceptionPack()", fetchAll.exceptionPack());
         }
+
         if (true) {
             d.cr("------- TS_ThreadFetchAll.UNTIL -------");
             var fetchAll = TS_ThreadFetchAll.of(Instant.now().plusSeconds(1), callables);
@@ -127,6 +134,7 @@ public class Main {
             fetchAll.exceptionLst().forEach(e -> d.cr("fetchAll.e", e.getMessage()));
             d.cr("fetchAll.exceptionPack()", fetchAll.exceptionPack());
         }
+
         if (true) {
             d.cr("------- TS_ThreadFetchFirst.JOIN -------");
             var fetchFirst = TS_ThreadFetchFirst.of(null, callables);
@@ -135,6 +143,7 @@ public class Main {
             d.cr("fetchFirst.exception()", fetchFirst.exception());
             d.cr("fetchFirst.states()", fetchFirst.states());
         }
+
         if (true) {
             d.cr("------- TS_ThreadFetchFirst.UNTIL -------");
             var fetchFirst = TS_ThreadFetchFirst.of(Instant.now().plusSeconds(1), callables);
@@ -142,6 +151,18 @@ public class Main {
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             d.cr("fetchFirst.exception()", fetchFirst.exception());
             d.cr("fetchFirst.states()", fetchFirst.states());
+        }
+
+        if (true) {
+            d.cr("------- TS_ThreadFetchValidated.UNTIL -------");
+            var fetchValidated = TS_ThreadFetchValidated.of(Instant.now().plusSeconds(60), callables, validators);
+            fetchValidated.resultLst().forEach(result -> d.cr("fetchValidated.result", result));
+            d.cr("fetchValidated.timeout()", fetchValidated.timeout());
+            fetchValidated.exceptionLst().forEach(e -> d.cr("fetchValidated.e", e.getMessage()));
+            d.cr("fetchValidated.exceptionPack()", fetchValidated.exceptionPack());
+            d.cr("fetchValidated.isValidated()", fetchValidated.isValidated());
+            d.cr("fetchValidated.isValidated()", fetchValidated.isValidated());
+            fetchValidated.validationErrorLst().forEach(ve -> d.cr("fetchValidated.v", ve.name(), ve.error() == null ? "" : ve.error().getMessage()));
         }
     }
 }
