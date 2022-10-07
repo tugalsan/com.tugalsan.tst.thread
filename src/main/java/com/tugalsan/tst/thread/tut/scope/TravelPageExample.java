@@ -1,4 +1,4 @@
-package com.tugalsan.tst.thread;
+package com.tugalsan.tst.thread.tut.scope;
 
 import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.thread.server.TS_ThreadExceptionPck;
