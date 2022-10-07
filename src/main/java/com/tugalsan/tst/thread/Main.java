@@ -1,6 +1,8 @@
 package com.tugalsan.tst.thread;
 
 import com.tugalsan.api.log.server.*;
+import com.tugalsan.api.random.client.TGS_RandomUtils;
+import com.tugalsan.api.random.server.TS_RandomUtils;
 import com.tugalsan.api.thread.server.TS_ThreadFetchAll;
 import com.tugalsan.api.thread.server.TS_ThreadFetchFirst;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
@@ -24,41 +26,50 @@ public class Main {
     }
 
     public static void threadLocalRandomTest() {
-//                    TS_ThreadRun.now(() -> TS_RandomUtils.nextFloat(0, 1));
-//                    TS_ThreadRun.now(() -> TGS_RandomUtils.nextFloat(0, 1));
         enum TestType {
             useNewThreadLocalRandom, useNewRandom,
             ReUseThreadLocal, ReUseRandom,
-            ReUseGlobalRandom
+            ReUseGlobalRandom,
+            customThreadLocalRandom, customRandom
         }
+        var testType = TestType.customRandom;
         var rg = new Random();
-        var testType = TestType.ReUseGlobalRandom;
         IntStream.range(0, 1_000_000).forEach(i -> {
-            if (testType == TestType.useNewThreadLocalRandom) {
+            if (testType == TestType.useNewThreadLocalRandom) {//63mb->60mb
                 IntStream.range(0, 100).forEach(j -> {
                     ThreadLocalRandom.current().nextFloat(1);
                 });
             }
-            if (testType == TestType.useNewRandom) {
+            if (testType == TestType.useNewRandom) {//326mb->323mb
                 IntStream.range(0, 100).forEach(j -> {
                     new Random().nextFloat(1);
                 });
             }
-            if (testType == TestType.ReUseThreadLocal) {
+            if (testType == TestType.ReUseThreadLocal) {//65mb->61mb
                 var r = ThreadLocalRandom.current();
                 IntStream.range(0, 100).forEach(j -> {
                     r.nextFloat(1);
                 });
             }
-            if (testType == TestType.ReUseRandom) {
+            if (testType == TestType.ReUseRandom) {//111mb->108mb
                 var r = new Random();
                 IntStream.range(0, 100).forEach(j -> {
                     r.nextFloat(1);
                 });
             }
-            if (testType == TestType.ReUseRandom) {
+            if (testType == TestType.ReUseGlobalRandom) {//64mb->61mb
                 IntStream.range(0, 100).forEach(j -> {
                     rg.nextFloat(1);
+                });
+            }
+            if (testType == TestType.customThreadLocalRandom) {//63mb->60mb
+                IntStream.range(0, 100).forEach(j -> {
+                    TS_RandomUtils.nextFloat(0, 1);
+                });
+            }
+            if (testType == TestType.customRandom) {//63mb->60mb
+                IntStream.range(0, 100).forEach(j -> {
+                    TGS_RandomUtils.nextFloat(0, 1);
                 });
             }
         });
