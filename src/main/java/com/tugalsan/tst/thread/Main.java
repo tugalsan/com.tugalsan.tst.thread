@@ -20,20 +20,45 @@ public class Main {
     //java --enable-preview --add-modules jdk.incubator.concurrent -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
 //        scopeTest();
-        threadLocalRandomTest(false);
+        threadLocalRandomTest();
     }
 
-    public static void threadLocalRandomTest(boolean useThreadLocal) {
+    public static void threadLocalRandomTest() {
 //                    TS_ThreadRun.now(() -> TS_RandomUtils.nextFloat(0, 1));
 //                    TS_ThreadRun.now(() -> TGS_RandomUtils.nextFloat(0, 1));
+        enum TestType {
+            useNewThreadLocalRandom, useNewRandom,
+            ReUseThreadLocal, ReUseRandom,
+            ReUseGlobalRandom
+        }
+        var rg = new Random();
+        var testType = TestType.ReUseGlobalRandom;
         IntStream.range(0, 1_000_000).forEach(i -> {
-            if (useThreadLocal) {
+            if (testType == TestType.useNewThreadLocalRandom) {
                 IntStream.range(0, 100).forEach(j -> {
                     ThreadLocalRandom.current().nextFloat(1);
                 });
-            } else {
+            }
+            if (testType == TestType.useNewRandom) {
                 IntStream.range(0, 100).forEach(j -> {
                     new Random().nextFloat(1);
+                });
+            }
+            if (testType == TestType.ReUseThreadLocal) {
+                var r = ThreadLocalRandom.current();
+                IntStream.range(0, 100).forEach(j -> {
+                    r.nextFloat(1);
+                });
+            }
+            if (testType == TestType.ReUseRandom) {
+                var r = new Random();
+                IntStream.range(0, 100).forEach(j -> {
+                    r.nextFloat(1);
+                });
+            }
+            if (testType == TestType.ReUseRandom) {
+                IntStream.range(0, 100).forEach(j -> {
+                    rg.nextFloat(1);
                 });
             }
         });
