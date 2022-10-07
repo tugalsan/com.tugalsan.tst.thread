@@ -25,6 +25,19 @@ public class Main {
         threadLocalRandomTest();
     }
 
+    /*
+    TODO: PLAY THINGS...
+    To generate a random int in the range [0, 1_000]:
+    int n = new SplittableRandom().nextInt(0, 1_001);
+
+    To generate a random int[100] array of values in the range [0, 1_000]:
+    int[] a = new SplittableRandom().ints(100, 0, 1_001).parallel().toArray();
+
+    To return a Stream of random values:
+    IntStream stream = new SplittableRandom().ints(100, 0, 1_001);
+    
+    SecureRandom rand = new SecureRandom();
+     */
     public static void threadLocalRandomTest() {
         enum TestType {
             useNewThreadLocalRandom, useNewRandom,
