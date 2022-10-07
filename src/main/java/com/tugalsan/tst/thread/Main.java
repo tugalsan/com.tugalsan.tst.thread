@@ -1,16 +1,15 @@
 package com.tugalsan.tst.thread;
 
 import com.tugalsan.api.log.server.*;
-import com.tugalsan.api.random.client.TGS_RandomUtils;
-import com.tugalsan.api.random.server.TS_RandomUtils;
 import com.tugalsan.api.thread.server.TS_ThreadFetchAll;
 import com.tugalsan.api.thread.server.TS_ThreadFetchFirst;
-import com.tugalsan.api.thread.server.TS_ThreadRun;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
 import java.time.Instant;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
 public class Main {
@@ -27,12 +26,16 @@ public class Main {
     public static void threadLocalRandomTest(boolean useThreadLocal) {
         IntStream.range(0, 1_000_000).forEach(i -> {
             if (useThreadLocal) {
+                ThreadLocalRandom random = ThreadLocalRandom.current();
                 IntStream.range(0, 100).forEach(j -> {
-                    TS_ThreadRun.now(() -> TS_RandomUtils.nextFloat(0, 1));
+//                    TS_ThreadRun.now(() -> TS_RandomUtils.nextFloat(0, 1));
+                    random.nextFloat(1);
                 });
             } else {
                 IntStream.range(0, 100).forEach(j -> {
-                    TS_ThreadRun.now(() -> TGS_RandomUtils.nextFloat(0, 1));
+                    Random random = ThreadLocalRandom.current();
+//                    TS_ThreadRun.now(() -> TGS_RandomUtils.nextFloat(0, 1));
+                    random.nextFloat(1);
                 });
             }
         });
