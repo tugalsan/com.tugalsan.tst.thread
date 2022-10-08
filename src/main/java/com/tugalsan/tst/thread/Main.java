@@ -3,9 +3,9 @@ package com.tugalsan.tst.thread;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.random.client.TGS_RandomUtils;
 import com.tugalsan.api.random.server.TS_RandomUtils;
-import com.tugalsan.api.thread.server.TS_ThreadFetchAll;
-import com.tugalsan.api.thread.server.TS_ThreadFetchFirst;
-import com.tugalsan.api.thread.server.TS_ThreadFetchValidated;
+import com.tugalsan.api.thread.server.TS_ThreadRunAll;
+import com.tugalsan.api.thread.server.TS_ThreadRunAllUntilFirstFail;
+import com.tugalsan.api.thread.server.TS_ThreadRunAllUntilFirstSuccess;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
 import java.time.Instant;
@@ -91,10 +91,6 @@ public class Main {
     }
 
     public static void scopeTest() {
-        List<Callable<TS_ThreadFetchValidated.ValidationError>> validators = List.of(
-                () -> null,//VALIDATED
-                () -> new TS_ThreadFetchValidated.ValidationError("not validated", null)
-        );
         List<Callable<String>> callables = List.of(
                 () -> {
                     d.cr("fetcing...", "1");
@@ -118,52 +114,58 @@ public class Main {
         );
 
         if (true) {
-            d.cr("------- TS_ThreadFetchAll.JOIN -------");
-            var fetchAll = TS_ThreadFetchAll.of(null, callables);
-            fetchAll.resultLst().forEach(result -> d.cr("fetchAll.result", result));
-            d.cr("fetchAll.timeout()", fetchAll.timeout());
-            fetchAll.exceptionLst().forEach(e -> d.cr("fetchAll.e", e.getMessage()));
+            d.cr("------- TS_ThreadRunAll.JOIN -------");
+            var fetchAll = TS_ThreadRunAll.of(null, callables);
+            fetchAll.results.forEach(result -> d.cr("fetchAll.result", result));
+            d.cr("fetchAll.timeout()", fetchAll.timeout);
+            fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
             d.cr("fetchAll.exceptionPack()", fetchAll.exceptionPack());
         }
 
         if (true) {
-            d.cr("------- TS_ThreadFetchAll.UNTIL -------");
-            var fetchAll = TS_ThreadFetchAll.of(Instant.now().plusSeconds(1), callables);
-            fetchAll.resultLst().forEach(result -> d.cr("fetchAll.result", result));
-            d.cr("fetchAll.timeout()", fetchAll.timeout());
-            fetchAll.exceptionLst().forEach(e -> d.cr("fetchAll.e", e.getMessage()));
+            d.cr("------- TS_ThreadRunAll.UNTIL -------");
+            var fetchAll = TS_ThreadRunAll.of(Instant.now().plusSeconds(1), callables);
+            fetchAll.results.forEach(result -> d.cr("fetchAll.result", result));
+            d.cr("fetchAll.timeout()", fetchAll.timeout);
+            fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
             d.cr("fetchAll.exceptionPack()", fetchAll.exceptionPack());
         }
 
         if (true) {
-            d.cr("------- TS_ThreadFetchFirst.JOIN -------");
-            var fetchFirst = TS_ThreadFetchFirst.of(null, callables);
-            d.cr("fetchFirst.result()", fetchFirst.result());
-            d.cr("fetchFirst.timeout()", fetchFirst.timeout());
-            d.cr("fetchFirst.exception()", fetchFirst.exception());
-            d.cr("fetchFirst.states()", fetchFirst.states());
+            d.cr("------- TS_ThreadRunAllUntilFirstSuccess.JOIN -------");
+            var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(null, callables);
+            d.cr("fetchFirst.result()", fetchFirst.result);
+            d.cr("fetchFirst.timeout()", fetchFirst.timeout);
+            d.cr("fetchFirst.exception()", fetchFirst.exception);
+            d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
         if (true) {
-            d.cr("------- TS_ThreadFetchFirst.UNTIL -------");
-            var fetchFirst = TS_ThreadFetchFirst.of(Instant.now().plusSeconds(1), callables);
-            d.cr("fetchFirst.result()", fetchFirst.result());
-            d.cr("fetchFirst.timeout()", fetchFirst.timeout());
-            d.cr("fetchFirst.exception()", fetchFirst.exception());
-            d.cr("fetchFirst.states()", fetchFirst.states());
+            d.cr("------- TS_ThreadRunAllUntilFirstSuccess.UNTIL -------");
+            var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(Instant.now().plusSeconds(1), callables);
+            d.cr("fetchFirst.result()", fetchFirst.result);
+            d.cr("fetchFirst.timeout()", fetchFirst.timeout);
+            d.cr("fetchFirst.exception()", fetchFirst.exception);
+            d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
         if (true) {
-            d.cr("------- TS_ThreadFetchValidated.UNTIL -------");
-            var fetchValidated = TS_ThreadFetchValidated.of(Instant.now().plusSeconds(60), callables, validators);
-            if (fetchValidated.resultLstIfValidated() != null) {
-                fetchValidated.resultLstIfValidated().forEach(result -> d.cr("fetchValidated.result", result));
-            }
-            d.cr("fetchValidated.timeout()", fetchValidated.timeout());
-            fetchValidated.exceptionLst().forEach(e -> d.cr("fetchValidated.e", e.getMessage()));
-            d.cr("fetchValidated.exceptionPack()", fetchValidated.exceptionPack());
-            d.cr("fetchValidated.isValidated()", fetchValidated.isValidated());
-            fetchValidated.validationErrorLst().forEach(ve -> d.cr("fetchValidated.v", ve.name(), ve.error() == null ? "" : ve.error().getMessage()));
+            d.cr("------- TS_ThreadRunAllUntilFirstFail.JOIN -------");
+            var fetchFail = TS_ThreadRunAllUntilFirstFail.of(null, callables);
+            d.cr("fetchFail.result()", fetchFail.results);
+            d.cr("fetchFail.timeout()", fetchFail.timeout);
+            fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
+            d.cr("fetchFail.states()", fetchFail.states);
         }
+
+        if (true) {
+            d.cr("------- TS_ThreadRunAllUntilFirstFail.UNTIL -------");
+            var fetchFail = TS_ThreadRunAllUntilFirstFail.of(Instant.now().plusSeconds(1), callables);
+            d.cr("fetchFail.result()", fetchFail.results);
+            d.cr("fetchFail.timeout()", fetchFail.timeout);
+            fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
+            d.cr("fetchFail.states()", fetchFail.states);
+        }
+
     }
 }
