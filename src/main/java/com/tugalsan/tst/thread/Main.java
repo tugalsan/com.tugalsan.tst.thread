@@ -119,7 +119,6 @@ public class Main {
             fetchAll.results.forEach(result -> d.cr("fetchAll.result", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout);
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
-            d.cr("fetchAll.exceptionPack()", fetchAll.exceptionPack());
         }
 
         if (true) {
@@ -128,7 +127,6 @@ public class Main {
             fetchAll.results.forEach(result -> d.cr("fetchAll.result", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout);
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
-            d.cr("fetchAll.exceptionPack()", fetchAll.exceptionPack());
         }
 
         if (true) {
