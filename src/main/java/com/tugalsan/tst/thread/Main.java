@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 
 public class Main {
 
-    private static final TS_Log d = TS_Log.of(Main.class);
+    private static final TS_Log d = TS_Log.of(true,Main.class);
 
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.concurrent -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
@@ -159,6 +159,24 @@ public class Main {
         if (true) {
             d.cr("------- TS_ThreadRunAllUntilFirstFail.TIMED -------");
             var fetchFail = TS_ThreadRunAllUntilFirstFail.of(Duration.ofSeconds(1), callables);
+            d.cr("fetchFail.result()", fetchFail.resultsNotNull);
+            d.cr("fetchFail.timeout()", fetchFail.timeout());
+            fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
+            d.cr("fetchFail.states()", fetchFail.states);
+        }
+
+        if (true) {
+            Callable<String> callableBlocking = () -> {
+                d.ci("fetchFail.callableBlocking", "begin");
+                while (true) {
+                    d.ci("fetchFail.callableBlocking", "while");
+                    TS_ThreadWait.of(Duration.ofSeconds(1));
+                }
+//                d.ci("fetchFail.callableBlocking", "never ends");
+//                return "4";
+            };
+            d.cr("------- TS_ThreadRunAllUntilFirstFail.TIMED.BLOCKING -------");
+            var fetchFail = TS_ThreadRunAllUntilFirstFail.of(Duration.ofSeconds(1), callableBlocking);
             d.cr("fetchFail.result()", fetchFail.resultsNotNull);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
