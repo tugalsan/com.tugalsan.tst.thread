@@ -170,8 +170,8 @@ public class Main {
 //                d.ci("fetchFail.callableBlocking", "never ends");
 //                return "4";
             };
-            d.cr("------- parallelUntilFirstFail.TIMED.BLOCKING -------");
-            var fetchFail = TS_ThreadCall.parallelUntilFirstFail(Duration.ofSeconds(1), callableBlocking);
+            d.cr("------- single.TIMED.BLOCKING -------");
+            var fetchFail = TS_ThreadCall.single(Duration.ofSeconds(1), callableBlocking);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
