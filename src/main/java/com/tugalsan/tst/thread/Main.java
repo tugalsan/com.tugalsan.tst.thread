@@ -116,7 +116,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAll.FOREVER -------");
             var fetchAll = TS_ThreadRunAll.of(null, callables);
-            fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsIfNotTimeout", result));
+            fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
@@ -124,7 +124,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAll.TIMED -------");
             var fetchAll = TS_ThreadRunAll.of(Duration.ofSeconds(1), callables);
-            fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsIfNotTimeout", result));
+            fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
@@ -132,7 +132,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstSuccess.FOREVER -------");
             var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(null, callables);
-            d.cr("fetchFirst.resultIfNotTimeout()", fetchFirst.resultIfSuccessful);
+            d.cr("fetchFirst.resultIfSuccessful()", fetchFirst.resultIfSuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
             d.cr("fetchFirst.states()", fetchFirst.states);
@@ -141,7 +141,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstSuccess.TIMED -------");
             var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(Duration.ofSeconds(1), callables);
-            d.cr("fetchFirst.resultIfNotTimeout()", fetchFirst.resultIfSuccessful);
+            d.cr("fetchFirst.resultIfSuccessful()", fetchFirst.resultIfSuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
             d.cr("fetchFirst.states()", fetchFirst.states);
