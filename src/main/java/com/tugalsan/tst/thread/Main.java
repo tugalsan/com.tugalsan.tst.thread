@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 
 public class Main {
 
-    private static final TS_Log d = TS_Log.of(true,Main.class);
+    private static final TS_Log d = TS_Log.of(true, Main.class);
 
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.concurrent -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
@@ -113,7 +113,7 @@ public class Main {
                 }
         );
 
-        if (true) {
+        if (false) {
             d.cr("------- TS_ThreadRunAll.FOREVER -------");
             var fetchAll = TS_ThreadRunAll.of(null, callables);
             fetchAll.resultsNotNull.forEach(result -> d.cr("fetchAll.result", result));
@@ -121,7 +121,7 @@ public class Main {
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- TS_ThreadRunAll.TIMED -------");
             var fetchAll = TS_ThreadRunAll.of(Duration.ofSeconds(1), callables);
             fetchAll.resultsNotNull.forEach(result -> d.cr("fetchAll.result", result));
@@ -129,7 +129,7 @@ public class Main {
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstSuccess.FOREVER -------");
             var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(null, callables);
             d.cr("fetchFirst.result()", fetchFirst.resultIfNotTimeout);
@@ -138,7 +138,7 @@ public class Main {
             d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstSuccess.TIMED -------");
             var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(Duration.ofSeconds(1), callables);
             d.cr("fetchFirst.result()", fetchFirst.resultIfNotTimeout);
@@ -147,7 +147,7 @@ public class Main {
             d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstFail.FOREVER -------");
             var fetchFail = TS_ThreadRunAllUntilFirstFail.of(null, callables);
             d.cr("fetchFail.result()", fetchFail.resultsNotNull);
@@ -156,7 +156,7 @@ public class Main {
             d.cr("fetchFail.states()", fetchFail.states);
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstFail.TIMED -------");
             var fetchFail = TS_ThreadRunAllUntilFirstFail.of(Duration.ofSeconds(1), callables);
             d.cr("fetchFail.result()", fetchFail.resultsNotNull);
