@@ -116,7 +116,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAll.FOREVER -------");
             var fetchAll = TS_ThreadRunAll.of(null, callables);
-            fetchAll.resultsNotNull.forEach(result -> d.cr("fetchAll.result", result));
+            fetchAll.resultsIfNotTimeout.forEach(result -> d.cr("fetchAll.resultsIfNotTimeout", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
@@ -124,7 +124,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAll.TIMED -------");
             var fetchAll = TS_ThreadRunAll.of(Duration.ofSeconds(1), callables);
-            fetchAll.resultsNotNull.forEach(result -> d.cr("fetchAll.result", result));
+            fetchAll.resultsIfNotTimeout.forEach(result -> d.cr("fetchAll.resultsIfNotTimeout", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
@@ -132,7 +132,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstSuccess.FOREVER -------");
             var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(null, callables);
-            d.cr("fetchFirst.result()", fetchFirst.resultIfNotTimeout);
+            d.cr("fetchFirst.resultIfNotTimeout()", fetchFirst.resultIfNotTimeout);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
             d.cr("fetchFirst.states()", fetchFirst.states);
@@ -141,7 +141,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstSuccess.TIMED -------");
             var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(Duration.ofSeconds(1), callables);
-            d.cr("fetchFirst.result()", fetchFirst.resultIfNotTimeout);
+            d.cr("fetchFirst.resultIfNotTimeout()", fetchFirst.resultIfNotTimeout);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
             d.cr("fetchFirst.states()", fetchFirst.states);
@@ -150,7 +150,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstFail.FOREVER -------");
             var fetchFail = TS_ThreadRunAllUntilFirstFail.of(null, callables);
-            d.cr("fetchFail.result()", fetchFail.resultsNotNull);
+            d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
             d.cr("fetchFail.states()", fetchFail.states);
@@ -159,7 +159,7 @@ public class Main {
         if (false) {
             d.cr("------- TS_ThreadRunAllUntilFirstFail.TIMED -------");
             var fetchFail = TS_ThreadRunAllUntilFirstFail.of(Duration.ofSeconds(1), callables);
-            d.cr("fetchFail.result()", fetchFail.resultsNotNull);
+            d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
             d.cr("fetchFail.states()", fetchFail.states);
@@ -177,7 +177,7 @@ public class Main {
             };
             d.cr("------- TS_ThreadRunAllUntilFirstFail.TIMED.BLOCKING -------");
             var fetchFail = TS_ThreadRunAllUntilFirstFail.of(Duration.ofSeconds(1), callableBlocking);
-            d.cr("fetchFail.result()", fetchFail.resultsNotNull);
+            d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
             d.cr("fetchFail.states()", fetchFail.states);
