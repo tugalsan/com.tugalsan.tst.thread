@@ -1,20 +1,14 @@
 package com.tugalsan.tst.thread;
 
 import com.tugalsan.api.log.server.*;
-import com.tugalsan.api.random.client.TGS_RandomUtils;
-import com.tugalsan.api.random.server.TS_RandomUtils;
-import com.tugalsan.api.thread.server.TS_ThreadRun;
-import com.tugalsan.api.thread.server.TS_ThreadWait;
-import com.tugalsan.api.thread.server.core.TS_ThreadRunParallel;
-import com.tugalsan.api.thread.server.core.TS_ThreadRunParallelUntilFirstFail;
-import com.tugalsan.api.thread.server.core.TS_ThreadRunParallelUntilFirstSuccess;
-import com.tugalsan.api.unsafe.client.TGS_UnSafe;
-import java.time.Duration;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
+import com.tugalsan.api.random.client.*;
+import com.tugalsan.api.random.server.*;
+import com.tugalsan.api.thread.server.*;
+import com.tugalsan.api.unsafe.client.*;
+import java.time.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.*;
 
 public class Main {
 
