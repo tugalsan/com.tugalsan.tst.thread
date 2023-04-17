@@ -103,7 +103,7 @@ public class Main {
                     d.cr("fetcing...", "3");
                     TS_ThreadWait.seconds(null, 3);
                     d.cr("completed", "3");
-                    TGS_UnSafe.catchMeIfUCan(d.className, "Callable", "3");
+                    TGS_UnSafe.thrw(d.className, "Callable", "3");
                     return "3";
                 }
         );
