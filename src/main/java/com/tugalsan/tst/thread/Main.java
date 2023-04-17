@@ -110,7 +110,7 @@ public class Main {
 
         if (false) {
             d.cr("------- parallel.FOREVER -------");
-            var fetchAll = TS_ThreadRun.parallel(null, callables);
+            var fetchAll = TS_ThreadCall.parallel(null, callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
@@ -118,7 +118,7 @@ public class Main {
 
         if (false) {
             d.cr("------- parallel.TIMED -------");
-            var fetchAll = TS_ThreadRun.parallel(Duration.ofSeconds(1), callables);
+            var fetchAll = TS_ThreadCall.parallel(Duration.ofSeconds(1), callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
@@ -126,7 +126,7 @@ public class Main {
 
         if (false) {
             d.cr("------- parallelUntilFirstSuccess.FOREVER -------");
-            var fetchFirst = TS_ThreadRun.parallelUntilFirstSuccess(null, callables);
+            var fetchFirst = TS_ThreadCall.parallelUntilFirstSuccess(null, callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
@@ -135,7 +135,7 @@ public class Main {
 
         if (false) {
             d.cr("------- parallelUntilFirstSuccess.TIMED -------");
-            var fetchFirst = TS_ThreadRun.parallelUntilFirstSuccess(Duration.ofSeconds(1), callables);
+            var fetchFirst = TS_ThreadCall.parallelUntilFirstSuccess(Duration.ofSeconds(1), callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
@@ -144,7 +144,7 @@ public class Main {
 
         if (false) {
             d.cr("------- parallelUntilFirstFail.FOREVER -------");
-            var fetchFail = TS_ThreadRun.parallelUntilFirstFail(null, callables);
+            var fetchFail = TS_ThreadCall.parallelUntilFirstFail(null, callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
@@ -153,7 +153,7 @@ public class Main {
 
         if (false) {
             d.cr("------- parallelUntilFirstFail.TIMED -------");
-            var fetchFail = TS_ThreadRun.parallelUntilFirstFail(Duration.ofSeconds(1), callables);
+            var fetchFail = TS_ThreadCall.parallelUntilFirstFail(Duration.ofSeconds(1), callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
@@ -171,7 +171,7 @@ public class Main {
 //                return "4";
             };
             d.cr("------- parallelUntilFirstFail.TIMED.BLOCKING -------");
-            var fetchFail = TS_ThreadRun.parallelUntilFirstFail(Duration.ofSeconds(1), callableBlocking);
+            var fetchFail = TS_ThreadCall.parallelUntilFirstFail(Duration.ofSeconds(1), callableBlocking);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
