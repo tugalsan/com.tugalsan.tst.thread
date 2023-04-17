@@ -3,10 +3,11 @@ package com.tugalsan.tst.thread;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.random.client.TGS_RandomUtils;
 import com.tugalsan.api.random.server.TS_RandomUtils;
-import com.tugalsan.api.thread.server.TS_ThreadRunAll;
-import com.tugalsan.api.thread.server.TS_ThreadRunAllUntilFirstFail;
-import com.tugalsan.api.thread.server.TS_ThreadRunAllUntilFirstSuccess;
+import com.tugalsan.api.thread.server.TS_ThreadRun;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
+import com.tugalsan.api.thread.server.core.TS_ThreadRunParallel;
+import com.tugalsan.api.thread.server.core.TS_ThreadRunParallelUntilFirstFail;
+import com.tugalsan.api.thread.server.core.TS_ThreadRunParallelUntilFirstSuccess;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
 import java.time.Duration;
 import java.util.List;
@@ -114,24 +115,24 @@ public class Main {
         );
 
         if (false) {
-            d.cr("------- TS_ThreadRunAll.FOREVER -------");
-            var fetchAll = TS_ThreadRunAll.of(null, callables);
+            d.cr("------- parallel.FOREVER -------");
+            var fetchAll = TS_ThreadRun.parallel(null, callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
         if (false) {
-            d.cr("------- TS_ThreadRunAll.TIMED -------");
-            var fetchAll = TS_ThreadRunAll.of(Duration.ofSeconds(1), callables);
+            d.cr("------- parallel.TIMED -------");
+            var fetchAll = TS_ThreadRun.parallel(Duration.ofSeconds(1), callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
         if (false) {
-            d.cr("------- TS_ThreadRunAllUntilFirstSuccess.FOREVER -------");
-            var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(null, callables);
+            d.cr("------- parallelUntilFirstSuccess.FOREVER -------");
+            var fetchFirst = TS_ThreadRun.parallelUntilFirstSuccess(null, callables);
             d.cr("fetchFirst.resultIfSuccessful()", fetchFirst.resultIfSuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
@@ -139,8 +140,8 @@ public class Main {
         }
 
         if (false) {
-            d.cr("------- TS_ThreadRunAllUntilFirstSuccess.TIMED -------");
-            var fetchFirst = TS_ThreadRunAllUntilFirstSuccess.of(Duration.ofSeconds(1), callables);
+            d.cr("------- parallelUntilFirstSuccess.TIMED -------");
+            var fetchFirst = TS_ThreadRun.parallelUntilFirstSuccess(Duration.ofSeconds(1), callables);
             d.cr("fetchFirst.resultIfSuccessful()", fetchFirst.resultIfSuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
@@ -148,8 +149,8 @@ public class Main {
         }
 
         if (false) {
-            d.cr("------- TS_ThreadRunAllUntilFirstFail.FOREVER -------");
-            var fetchFail = TS_ThreadRunAllUntilFirstFail.of(null, callables);
+            d.cr("------- parallelUntilFirstFail.FOREVER -------");
+            var fetchFail = TS_ThreadRun.parallelUntilFirstFail(null, callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
@@ -157,8 +158,8 @@ public class Main {
         }
 
         if (false) {
-            d.cr("------- TS_ThreadRunAllUntilFirstFail.TIMED -------");
-            var fetchFail = TS_ThreadRunAllUntilFirstFail.of(Duration.ofSeconds(1), callables);
+            d.cr("------- parallelUntilFirstFail.TIMED -------");
+            var fetchFail = TS_ThreadRun.parallelUntilFirstFail(Duration.ofSeconds(1), callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
@@ -175,8 +176,8 @@ public class Main {
 //                d.ci("fetchFail.callableBlocking", "never ends");
 //                return "4";
             };
-            d.cr("------- TS_ThreadRunAllUntilFirstFail.TIMED.BLOCKING -------");
-            var fetchFail = TS_ThreadRunAllUntilFirstFail.of(Duration.ofSeconds(1), callableBlocking);
+            d.cr("------- parallelUntilFirstFail.TIMED.BLOCKING -------");
+            var fetchFail = TS_ThreadRun.parallelUntilFirstFail(Duration.ofSeconds(1), callableBlocking);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
