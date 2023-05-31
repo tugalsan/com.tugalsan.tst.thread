@@ -7,6 +7,6 @@ module com.tugalsan.tst.thread {
     requires com.tugalsan.api.unsafe;
     requires com.tugalsan.api.runnable;
     requires com.tugalsan.api.validator;
-    requires com.tugalsan.api.pack;
+    requires com.tugalsan.api.tuple;
     requires com.tugalsan.api.thread;
 }
