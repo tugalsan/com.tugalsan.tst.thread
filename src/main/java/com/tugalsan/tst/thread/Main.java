@@ -3,7 +3,7 @@ package com.tugalsan.tst.thread;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.random.client.*;
 import com.tugalsan.api.random.server.*;
-import com.tugalsan.api.thread.server.async.TS_ThreadAsyncAwait;
+import com.tugalsan.api.thread.server.struct.async.*;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.unsafe.client.*;
 import java.time.*;
