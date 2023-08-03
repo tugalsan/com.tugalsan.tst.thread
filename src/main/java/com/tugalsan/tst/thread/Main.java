@@ -5,7 +5,7 @@ import com.tugalsan.api.thread.server.async.TS_ThreadAsyncAwait;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.random.client.*;
 import com.tugalsan.api.random.server.*;
-import com.tugalsan.api.thread.server.safe.TS_ThreadSafeTrigger;
+import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.unsafe.client.*;
 import java.time.*;
@@ -20,7 +20,7 @@ public class Main {
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.concurrent -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
-        TS_ThreadSafeTrigger killTrigger = TS_ThreadSafeTrigger.of();
+        TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of();
         scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
     }
@@ -38,7 +38,7 @@ public class Main {
     
     SecureRandom rand = new SecureRandom();
      */
-    public static void threadLocalRandomTest(TS_ThreadSafeTrigger killTrigger) {
+    public static void threadLocalRandomTest(TS_ThreadSyncTrigger killTrigger) {
         enum TestType {
             useNewThreadLocalRandom, useNewRandom,
             ReUseThreadLocal, ReUseRandom,
@@ -89,9 +89,9 @@ public class Main {
         TS_ThreadWait.seconds(d.className, killTrigger, 10);
     }
 
-    public static void scopeTest(TS_ThreadSafeTrigger killTrigger) {
+    public static void scopeTest(TS_ThreadSyncTrigger killTrigger) {
         
-        List<TGS_CallableType1<String, TS_ThreadSafeTrigger>> callables = List.of(
+        List<TGS_CallableType1<String, TS_ThreadSyncTrigger>> callables = List.of(
                 kt -> {
                     d.cr("fetcing...", "1");
                     TS_ThreadWait.seconds(d.className, killTrigger, 10);
@@ -166,7 +166,7 @@ public class Main {
         }
 
         if (true) {
-            TGS_CallableType1<String, TS_ThreadSafeTrigger> callableBlocking = kt -> {
+            TGS_CallableType1<String, TS_ThreadSyncTrigger> callableBlocking = kt -> {
                 d.ci("fetchFail.callableBlocking", "begin");
                 while (killTrigger.hasNotTriggered()) {
                     d.ci("fetchFail.callableBlocking", "while");
