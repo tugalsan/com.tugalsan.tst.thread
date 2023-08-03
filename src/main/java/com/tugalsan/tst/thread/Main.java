@@ -1,9 +1,11 @@
 package com.tugalsan.tst.thread;
 
+import com.tugalsan.api.callable.client.TGS_CallableType1;
+import com.tugalsan.api.thread.server.async.TS_ThreadAsyncAwait;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.random.client.*;
 import com.tugalsan.api.random.server.*;
-import com.tugalsan.api.thread.server.struct.async.*;
+import com.tugalsan.api.thread.server.safe.TS_ThreadSafeTrigger;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.unsafe.client.*;
 import java.time.*;
@@ -18,8 +20,9 @@ public class Main {
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.concurrent -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
-        scopeTest();
-//        threadLocalRandomTest();
+        TS_ThreadSafeTrigger killTrigger = TS_ThreadSafeTrigger.of();
+        scopeTest(killTrigger);
+//        threadLocalRandomTest(killTrigger);
     }
 
     /*
@@ -35,7 +38,7 @@ public class Main {
     
     SecureRandom rand = new SecureRandom();
      */
-    public static void threadLocalRandomTest() {
+    public static void threadLocalRandomTest(TS_ThreadSafeTrigger killTrigger) {
         enum TestType {
             useNewThreadLocalRandom, useNewRandom,
             ReUseThreadLocal, ReUseRandom,
@@ -83,78 +86,70 @@ public class Main {
                 });
             }
         });
-        TS_ThreadWait.seconds(null, 10);
+        TS_ThreadWait.seconds(d.className, killTrigger, 10);
     }
 
-    public static void scopeTest() {
-        List<Callable<String>> callables = List.of(
-                () -> {
+    public static void scopeTest(TS_ThreadSafeTrigger killTrigger) {
+        
+        List<TGS_CallableType1<String, TS_ThreadSafeTrigger>> callables = List.of(
+                kt -> {
                     d.cr("fetcing...", "1");
-                    TS_ThreadWait.seconds(null, 10);
+                    TS_ThreadWait.seconds(d.className, killTrigger, 10);
                     d.cr("completed", "1");
                     return "1";
                 },
-                () -> {
+                kt -> {
                     d.cr("fetcing...", "2");
-                    TS_ThreadWait.seconds(null, 2);
+                    TS_ThreadWait.seconds(d.className, killTrigger, 2);
                     d.cr("completed", "2");
                     return "2";
                 },
-                () -> {
+                kt -> {
                     d.cr("fetcing...", "3");
-                    TS_ThreadWait.seconds(null, 3);
+                    TS_ThreadWait.seconds(d.className, killTrigger, 3);
                     d.cr("completed", "3");
                     TGS_UnSafe.thrw(d.className, "Callable", "3");
                     return "3";
                 }
         );
 
-        if (false) {
+        if (true) {
             d.cr("------- parallel.FOREVER -------");
-            var fetchAll = TS_ThreadAsyncAwait.callParallel(null, callables);
+            var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger, null, callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
-        if (false) {
+        if (true) {
             d.cr("------- parallel.TIMED -------");
-            var fetchAll = TS_ThreadAsyncAwait.callParallel(Duration.ofSeconds(1), callables);
+            var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger, Duration.ofSeconds(1), callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
-        if (false) {
+        if (true) {
             d.cr("------- parallelUntilFirstSuccess.FOREVER -------");
-            var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(null, callables);
+            var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger, null, callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
             d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
-        if (false) {
+        if (true) {
             d.cr("------- parallelUntilFirstSuccess.TIMED -------");
-            var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(Duration.ofSeconds(1), callables);
+            var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger, Duration.ofSeconds(1), callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
             d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
-        if (false) {
+        if (true) {
             d.cr("------- parallelUntilFirstFail.FOREVER -------");
-            var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(null, callables);
-            d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
-            d.cr("fetchFail.timeout()", fetchFail.timeout());
-            fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
-            d.cr("fetchFail.states()", fetchFail.states);
-        }
-
-        if (false) {
-            d.cr("------- parallelUntilFirstFail.TIMED -------");
-            var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(Duration.ofSeconds(1), callables);
+            var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger, null, callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
@@ -162,17 +157,26 @@ public class Main {
         }
 
         if (true) {
-            Callable<String> callableBlocking = () -> {
+            d.cr("------- parallelUntilFirstFail.TIMED -------");
+            var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger, Duration.ofSeconds(1), callables);
+            d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
+            d.cr("fetchFail.timeout()", fetchFail.timeout());
+            fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
+            d.cr("fetchFail.states()", fetchFail.states);
+        }
+
+        if (true) {
+            TGS_CallableType1<String, TS_ThreadSafeTrigger> callableBlocking = kt -> {
                 d.ci("fetchFail.callableBlocking", "begin");
-                while (true) {
+                while (killTrigger.hasNotTriggered()) {
                     d.ci("fetchFail.callableBlocking", "while");
-                    TS_ThreadWait.of(Duration.ofSeconds(1));
+                    TS_ThreadWait.of(d.className, killTrigger, Duration.ofSeconds(1));
                 }
-//                d.ci("fetchFail.callableBlocking", "never ends");
-//                return "4";
+                d.ci("fetchFail.callableBlocking", "never ends");
+                return "4";
             };
             d.cr("------- single.TIMED.BLOCKING -------");
-            var fetchFail = TS_ThreadAsyncAwait.callSingle(Duration.ofSeconds(1), callableBlocking);
+            var fetchFail = TS_ThreadAsyncAwait.callSingle(killTrigger, Duration.ofSeconds(1), callableBlocking);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
