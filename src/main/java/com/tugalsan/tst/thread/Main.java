@@ -7,6 +7,7 @@ import com.tugalsan.api.random.client.*;
 import com.tugalsan.api.random.server.*;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
+import com.tugalsan.api.thread.server.async.TS_ThreadAsyncScheduled;
 import com.tugalsan.api.unsafe.client.*;
 import java.time.*;
 import java.util.*;
@@ -90,7 +91,7 @@ public class Main {
     }
 
     public static void scopeTest(TS_ThreadSyncTrigger killTrigger) {
-        
+
         List<TGS_CallableType1<String, TS_ThreadSyncTrigger>> callables = List.of(
                 kt -> {
                     d.cr("fetcing...", "1");
@@ -182,6 +183,11 @@ public class Main {
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
             d.cr("fetchFail.states()", fetchFail.states);
         }
-
+        if (true) {
+            d.cr("------- everySeconds.killTriggered -------");
+            TS_ThreadAsyncScheduled.everySeconds(killTrigger, true, 5, kt -> d.ce("everySeconds", "tick"));
+            TS_ThreadWait.minutes("everySeconds", killTrigger, 1);
+            killTrigger.trigger();
+        }
     }
 }
