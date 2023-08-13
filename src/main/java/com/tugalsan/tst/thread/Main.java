@@ -177,11 +177,10 @@ public class Main {
                 return "4";
             };
             d.cr("------- single.TIMED.BLOCKING -------");
-            var fetchFail = TS_ThreadAsyncAwait.callSingle(killTrigger, Duration.ofSeconds(1), callableBlocking);
-            d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
-            d.cr("fetchFail.timeout()", fetchFail.timeout());
-            fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
-            d.cr("fetchFail.states()", fetchFail.states);
+            var fetchSingle = TS_ThreadAsyncAwait.callSingle(killTrigger, Duration.ofSeconds(1), callableBlocking);
+            d.cr("fetchSingle.resultIfSuccessful()", fetchSingle.resultIfSuccessful);
+            d.cr("fetchSingle.exceptionIfFailed()", fetchSingle.exceptionIfFailed);
+            d.cr("fetchSingle.timeout()", fetchSingle.timeout());
         }
         if (true) {
             d.cr("------- everySeconds.killTriggered -------");
