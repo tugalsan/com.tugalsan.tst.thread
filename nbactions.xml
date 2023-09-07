@@ -13,12 +13,12 @@
                 <goal>-X</goal>
             </goals>
             <properties>
-                <exec.vmArgs>--enable-preview --add-modules jdk.incubator.concurrent</exec.vmArgs>
+                <exec.vmArgs>--enable-preview --add-modules jdk.incubator.vector -XX:+EnableDynamicAgentLoading</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.appArgs></exec.appArgs>
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
-                <exec.workingdir>--enable-preview --add-modules jdk.incubator.concurrent</exec.workingdir>
+                <exec.workingdir>--enable-preview --add-modules jdk.incubator.vector -XX:+EnableDynamicAgentLoading</exec.workingdir>
             </properties>
         </action>
         <action>
@@ -31,13 +31,13 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
             </goals>
             <properties>
-                <exec.vmArgs>--enable-preview --add-modules jdk.incubator.concurrent -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
+                <exec.vmArgs>--enable-preview --add-modules jdk.incubator.vector -XX:+EnableDynamicAgentLoading -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.appArgs></exec.appArgs>
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
-                <exec.workingdir>--enable-preview --add-modules jdk.incubator.concurrent</exec.workingdir>
+                <exec.workingdir>--enable-preview --add-modules jdk.incubator.vector -XX:+EnableDynamicAgentLoading</exec.workingdir>
             </properties>
         </action>
         <action>
@@ -50,11 +50,11 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
             </goals>
             <properties>
-                <exec.vmArgs>--enable-preview --add-modules jdk.incubator.concurrent</exec.vmArgs>
+                <exec.vmArgs>--enable-preview --add-modules jdk.incubator.vector -XX:+EnableDynamicAgentLoading</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
-                <exec.workingdir>--enable-preview --add-modules jdk.incubator.concurrent</exec.workingdir>
+                <exec.workingdir>--enable-preview --add-modules jdk.incubator.vector -XX:+EnableDynamicAgentLoading</exec.workingdir>
                 <exec.appArgs></exec.appArgs>
             </properties>
         </action>
