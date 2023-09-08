@@ -1,5 +1,4 @@
 module com.tugalsan.tst.thread {
-    requires jdk.incubator.concurrent;
     requires gwt.user;
     requires com.tugalsan.api.log;
     requires com.tugalsan.api.callable;

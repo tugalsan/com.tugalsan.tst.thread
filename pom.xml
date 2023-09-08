@@ -42,8 +42,7 @@
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>20</maven.compiler.source>
-        <maven.compiler.target>20</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <exec.mainClass>com.tugalsan.tst.thread.Main</exec.mainClass>
     </properties>
     <build>
@@ -75,10 +74,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <release>20</release><enablePreview>true</enablePreview>
+                    <release>21</release><enablePreview>true</enablePreview>
                     <compilerArgs>
-                        <arg>--add-modules</arg>
-                        <arg>jdk.incubator.concurrent</arg>
+                       
                         <arg>--add-modules</arg>
                         <arg>jdk.incubator.vector</arg>
                         <!-- <arg>-XX:+EnableDynamicAgentLoading -->
