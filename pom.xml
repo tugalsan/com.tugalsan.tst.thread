@@ -74,13 +74,13 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <release>21</release><enablePreview>true</enablePreview>
-                    <compilerArgs>
-                       
-                        <arg>--add-modules</arg>
+                    <release>21</release>
+                    <enablePreview>true</enablePreview>
+                    <!-- <compilerArgs>
+                       <arg>- -add-modules</arg>
                         <arg>jdk.incubator.vector</arg>
-                        <!-- <arg>-XX:+EnableDynamicAgentLoading -->
-                    </compilerArgs>
+                        <arg>-XX:+EnableDynamicAgentLoading 
+                    </compilerArgs> -->
                 </configuration>
             </plugin>    
         </plugins>
