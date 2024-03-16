@@ -74,7 +74,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.12.1</version>
                 <configuration>
-                    <release>21</release>
+                    <release>22</release>
                     <enablePreview>true</enablePreview>
                     <!-- <compilerArgs>
                        <arg>- -add-modules</arg>

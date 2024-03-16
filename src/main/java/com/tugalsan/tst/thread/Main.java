@@ -22,8 +22,22 @@ public class Main {
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
         TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of();
-        scopeTest(killTrigger);
+//        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
+        untilTest(killTrigger);
+    }
+
+    public static void untilTest(TS_ThreadSyncTrigger killTrigger) {
+        TS_ThreadAsyncAwait.runUntil(killTrigger, Duration.ofSeconds(3), kt -> {
+            while (true) {
+                d.cr("untilTest", "runUntil", System.currentTimeMillis());
+            }
+        });
+        TS_ThreadAsyncAwait.callSingle(killTrigger, Duration.ofSeconds(3), kt -> {
+            while (true) {
+                d.cr("untilTest", "callSingle", System.currentTimeMillis());
+            }
+        });
     }
 
     /*
