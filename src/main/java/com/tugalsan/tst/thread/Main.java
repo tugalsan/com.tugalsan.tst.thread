@@ -213,13 +213,20 @@ public class Main {
             d.cr("fetchFail.states()", fetchFail.states);
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- parallelUntilFirstFail.TIMED -------");
             var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger, Duration.ofSeconds(1), callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
             d.cr("fetchFail.states()", fetchFail.states);
+        }
+        if (true) {
+            d.cr("------- callSingle.TIMED -------");
+            var fetchFail = TS_ThreadAsyncAwait.callSingle(killTrigger, Duration.ofSeconds(1), callables.get(0));
+            d.cr("fetchFail.resultIfSuccessful", fetchFail.resultIfSuccessful);
+            d.cr("fetchFail.timeout()", fetchFail.timeout());
+            fetchFail.exceptionIfFailed.stream().forEach(e -> d.cr("fetchFail.e", e.getMessage()));
         }
 
         if (false) {
