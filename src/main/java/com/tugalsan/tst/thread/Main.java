@@ -12,6 +12,7 @@ import com.tugalsan.api.unsafe.client.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 import java.util.stream.*;
 
 public class Main {
@@ -22,22 +23,28 @@ public class Main {
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
         TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of();
+        scopeTestPure(killTrigger);
 //        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
-        untilTest(killTrigger);
+//        untilTest(killTrigger);
     }
 
     public static void untilTest(TS_ThreadSyncTrigger killTrigger) {
+        d.cr("untilTest", "step0");
         TS_ThreadAsyncAwait.runUntil(killTrigger, Duration.ofSeconds(3), kt -> {
             while (true) {
+                TS_ThreadWait.seconds("runUntil", killTrigger, 1);
                 d.cr("untilTest", "runUntil", System.currentTimeMillis());
             }
         });
+        d.cr("untilTest", "step1");
         TS_ThreadAsyncAwait.callSingle(killTrigger, Duration.ofSeconds(3), kt -> {
             while (true) {
+                TS_ThreadWait.seconds("callSingle", killTrigger, 1);
                 d.cr("untilTest", "callSingle", System.currentTimeMillis());
             }
         });
+        d.cr("untilTest", "step2");
     }
 
     /*
@@ -104,12 +111,47 @@ public class Main {
         TS_ThreadWait.seconds(d.className, killTrigger, 10);
     }
 
+    public static void scopeTestPure(TS_ThreadSyncTrigger killTrigger) {
+        Consumer<String> log = msg -> System.out.println("log -> " + msg);
+        Consumer<Duration> wait = duration -> {
+            try {
+                Thread.sleep(duration);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        Callable<String> callableBlocking = () -> {
+            log.accept("fetchFail.callableBlocking.begin");
+            while (true) {
+                log.accept("fetchFail.callableBlocking.while");
+                wait.accept(Duration.ofSeconds(1));
+            }
+//  log.accept("fetchFail.callableBlocking.neverEnds");
+//  return "never returns";
+        };
+        var scope = new StructuredTaskScope.ShutdownOnFailure();
+        try {
+            var future = scope.fork(callableBlocking);
+            scope.joinUntil(Instant.now().plusSeconds(1));
+            scope.throwIfFailed();
+            log.accept("result: " + future.get());
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            log.accept(e.getClass().getName() + ":" + e.getMessage());
+            if (e instanceof TimeoutException) {
+                scope.shutdown();
+                log.accept("INFO: shutdown triggered");
+            }
+        } finally {
+            scope.close();
+        }
+    }
+
     public static void scopeTest(TS_ThreadSyncTrigger killTrigger) {
 
         List<TGS_CallableType1<String, TS_ThreadSyncTrigger>> callables = List.of(
                 kt -> {
                     d.cr("fetcing...", "1");
-                    TS_ThreadWait.seconds(d.className, killTrigger, 10);
+                    TS_ThreadWait.seconds(d.className, killTrigger, 30);
                     d.cr("completed", "1");
                     return "1";
                 },
@@ -128,7 +170,7 @@ public class Main {
                 }
         );
 
-        if (true) {
+        if (false) {
             d.cr("------- parallel.FOREVER -------");
             var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger, null, callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
@@ -136,7 +178,7 @@ public class Main {
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- parallel.TIMED -------");
             var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger, Duration.ofSeconds(1), callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
@@ -144,7 +186,7 @@ public class Main {
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- parallelUntilFirstSuccess.FOREVER -------");
             var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger, null, callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
@@ -153,7 +195,7 @@ public class Main {
             d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- parallelUntilFirstSuccess.TIMED -------");
             var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger, Duration.ofSeconds(1), callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
@@ -162,7 +204,7 @@ public class Main {
             d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
-        if (true) {
+        if (false) {
             d.cr("------- parallelUntilFirstFail.FOREVER -------");
             var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger, null, callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
@@ -180,7 +222,7 @@ public class Main {
             d.cr("fetchFail.states()", fetchFail.states);
         }
 
-        if (true) {
+        if (false) {
             TGS_CallableType1<String, TS_ThreadSyncTrigger> callableBlocking = kt -> {
                 d.ci("fetchFail.callableBlocking", "begin");
                 while (killTrigger.hasNotTriggered()) {
@@ -196,7 +238,7 @@ public class Main {
             d.cr("fetchSingle.exceptionIfFailed()", fetchSingle.exceptionIfFailed);
             d.cr("fetchSingle.timeout()", fetchSingle.timeout());
         }
-        if (true) {
+        if (false) {
             d.cr("------- everySeconds.killTriggered -------");
             TS_ThreadAsyncScheduled.everySeconds(killTrigger, true, 5, kt -> d.ce("everySeconds", "tick"));
             TS_ThreadWait.minutes("everySeconds", killTrigger, 1);
