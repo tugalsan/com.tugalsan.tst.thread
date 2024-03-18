@@ -267,7 +267,7 @@ public class Main {
         }
         if (false) {
             d.cr("------- everySeconds.killTriggered -------");
-            TS_ThreadAsyncScheduled.everySeconds(killTrigger, true, 5, kt -> d.ce("everySeconds", "tick"));
+            TS_ThreadAsyncScheduled.everySeconds(killTrigger, Duration.ofHours(1), true, 5, kt -> d.ce("everySeconds", "tick"));
             TS_ThreadWait.seconds("everySeconds", killTrigger, 5);
             killTrigger.trigger();
         }
