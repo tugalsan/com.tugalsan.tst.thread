@@ -34,11 +34,17 @@ public class Main {
                 Duration.ofSeconds(5),
                 5
         );//after 4_000 stackoverflow!
-//        nestedTest_legacyCode(killTrigger, Duration.ofSeconds(1), 4_000);
+//        nestedTest_legacyCode(
+//                killTrigger, 
+//                Duration.ofSeconds(8), 
+//                Duration.ofSeconds(1), 
+//                4_000
+//        );//after 4_000 stackoverflow!
         d.cr("main", "waiting..");
         TS_ThreadWait.seconds("", killTrigger, 3);
     }
 
+    @Deprecated //NOT RESPECTING UNTIL !!!!!
     private static void nestedTest_pureJava(Duration untilTimeout, Duration workLoad, int nestedId) {
         if (nestedId < 0) {
             out.println("nestedTest_pureJava -> skip -> " + nestedId);
@@ -65,15 +71,15 @@ public class Main {
         out.println("nestedTest_pureJava -> end -> " + nestedId);
     }
 
-    @Deprecated //NOT RESPECTING UNTIL !!!!!
-    private static void nestedTest_legacyCode(TS_ThreadSyncTrigger killTrigger, Duration until, int nestedId) {
-        d.cr("nestedTest", "begin", nestedId);
+    private static void nestedTest_legacyCode(TS_ThreadSyncTrigger killTrigger, Duration untilTimeout, Duration workLoad, int nestedId) {
+        d.cr("nestedTest_legacyCode", "begin", nestedId);
         if (nestedId < 0) {
             return;
         }
-        d.cr("nestedTest", nestedId);
-        TS_ThreadAsyncAwait.runUntil(killTrigger, until, kt -> {
-            nestedTest_legacyCode(killTrigger, until, nestedId - 1);
+        d.cr("nestedTest_legacyCode", nestedId);
+        TS_ThreadAsyncAwait.runUntil(killTrigger, untilTimeout, kt -> {
+            TS_ThreadWait.of("nestedTest_legacyCode", killTrigger, workLoad);
+            nestedTest_legacyCode(killTrigger, untilTimeout, workLoad, nestedId - 1);
         });
         d.cr("nestedTest", "end", nestedId);
     }
