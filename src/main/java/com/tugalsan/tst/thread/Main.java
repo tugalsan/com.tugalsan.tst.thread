@@ -8,6 +8,7 @@ import com.tugalsan.api.random.server.*;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.thread.server.async.TS_ThreadAsyncScheduled;
+import com.tugalsan.api.thread.server.async.core.TS_ThreadAsyncCoreSingle;
 import com.tugalsan.api.unsafe.client.*;
 import static java.lang.System.out;
 import java.time.*;
@@ -35,9 +36,9 @@ public class Main {
                 5
         );//after 4_000 stackoverflow!
 //        nestedTest_legacyCode(
-//                killTrigger, 
-//                Duration.ofSeconds(8), 
-//                Duration.ofSeconds(1), 
+//                killTrigger,
+//                Duration.ofSeconds(8),
+//                Duration.ofSeconds(1),
 //                4_000
 //        );//after 4_000 stackoverflow!
         d.cr("main", "waiting..");
@@ -72,17 +73,22 @@ public class Main {
     }
 
     @Deprecated //IT IS RESPECTING UNTIL, BUT I DONT KNOW HOW!!!!!
-    private static void nestedTest_legacyCode(TS_ThreadSyncTrigger killTrigger, Duration untilTimeout, Duration workLoad, int nestedId) {
+    private static TS_ThreadAsyncCoreSingle<Void> nestedTest_legacyCode(TS_ThreadSyncTrigger killTrigger, Duration untilTimeout, Duration workLoad, int nestedId) {
         d.cr("nestedTest_legacyCode", "begin", nestedId);
         if (nestedId < 0) {
-            return;
+            return null;
         }
-        d.cr("nestedTest_legacyCode", nestedId);
-        TS_ThreadAsyncAwait.runUntil(killTrigger, untilTimeout, kt -> {
+        var t = TS_ThreadAsyncAwait.runUntil(killTrigger, untilTimeout, kt -> {
             TS_ThreadWait.of("nestedTest_legacyCode", killTrigger, workLoad);
-            nestedTest_legacyCode(killTrigger, untilTimeout, workLoad, nestedId - 1);
+            var _t = nestedTest_legacyCode(killTrigger, untilTimeout, workLoad, nestedId - 1);
+            if (_t == null) {
+                d.ce("nestedTest_legacyCode", "_t==null", nestedId - 1);
+                return;
+            }
+            d.ce("nestedTest_legacyCode", "elapsed", nestedId - 1, _t.elapsed.getSeconds());
         });
         d.cr("nestedTest", "end", nestedId);
+        return t;
     }
 
     private static void untilTest(TS_ThreadSyncTrigger killTrigger) {
