@@ -28,25 +28,59 @@ public class Main {
 //        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
-        nestedTest(killTrigger, 1_000_000);
-        d.cr("main", "waiting a minute");
-        TS_ThreadWait.minutes("", killTrigger, 1);
+        try {
+            nestedTest_pureJava(
+                    killTrigger,
+                    Duration.ofSeconds(8),
+                    Duration.ofSeconds(5),
+                    5
+            );//after 4_000 stackoverflow!
+        } catch (Exception e) {
+            d.ct("main", e);
+        }
+//        nestedTest_legacyCode(killTrigger, Duration.ofSeconds(1), 4_000);
+        d.cr("main", "waiting..");
+        TS_ThreadWait.seconds("", killTrigger, 3);
+    }
+
+    private static void nestedTest_pureJava(TS_ThreadSyncTrigger killTrigger, Duration untilTimeout, Duration workLoad, int nestedId) {
+        if (nestedId < 0) {
+            d.cr("nestedTest_pureJava", "skip", nestedId);
+            return;
+        }
+        d.cr("nestedTest_pureJava", "begin", nestedId);
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            scope.fork(() -> {
+                try {
+                    Thread.sleep(workLoad);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return null;
+            });
+            scope.joinUntil(Instant.now().plusSeconds(untilTimeout.getSeconds()));
+            scope.throwIfFailed();
+            nestedTest_pureJava(killTrigger, untilTimeout, workLoad, nestedId - 1);
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        d.cr("nestedTest_pureJava", "end", nestedId);
     }
 
     @Deprecated //NOT RESPECTING UNTIL !!!!!
-    public static void nestedTest(TS_ThreadSyncTrigger killTrigger, int nestedId) {
+    private static void nestedTest_legacyCode(TS_ThreadSyncTrigger killTrigger, Duration until, int nestedId) {
         d.cr("nestedTest", "begin", nestedId);
         if (nestedId < 0) {
             return;
         }
         d.cr("nestedTest", nestedId);
-        TS_ThreadAsyncAwait.runUntil(killTrigger, Duration.ofSeconds(0), kt -> {
-            nestedTest(killTrigger, nestedId - 1);
+        TS_ThreadAsyncAwait.runUntil(killTrigger, until, kt -> {
+            nestedTest_legacyCode(killTrigger, until, nestedId - 1);
         });
         d.cr("nestedTest", "end", nestedId);
     }
 
-    public static void untilTest(TS_ThreadSyncTrigger killTrigger) {
+    private static void untilTest(TS_ThreadSyncTrigger killTrigger) {
         d.cr("untilTest", "step0");
         TS_ThreadAsyncAwait.runUntil(killTrigger, Duration.ofSeconds(3), kt -> {
             while (true) {
@@ -77,7 +111,7 @@ public class Main {
     
     SecureRandom rand = new SecureRandom();
      */
-    public static void threadLocalRandomTest(TS_ThreadSyncTrigger killTrigger) {
+    private static void threadLocalRandomTest(TS_ThreadSyncTrigger killTrigger) {
         enum TestType {
             useNewThreadLocalRandom, useNewRandom,
             ReUseThreadLocal, ReUseRandom,
@@ -128,7 +162,7 @@ public class Main {
         TS_ThreadWait.seconds(d.className, killTrigger, 10);
     }
 
-    public static void scopeTestPure(TS_ThreadSyncTrigger killTrigger) {
+    private static void scopeTestPure(TS_ThreadSyncTrigger killTrigger) {
         Consumer<String> log = msg -> System.out.println("log -> " + msg);
         Consumer<Duration> wait = duration -> {
             try {
@@ -189,7 +223,7 @@ public class Main {
 
     }
 
-    public static void scopeTest(TS_ThreadSyncTrigger killTrigger) {
+    private static void scopeTest(TS_ThreadSyncTrigger killTrigger) {
 
         List<TGS_CallableType1<String, TS_ThreadSyncTrigger>> callables = List.of(
                 kt -> {
