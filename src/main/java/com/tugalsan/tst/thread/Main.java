@@ -9,6 +9,7 @@ import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.thread.server.async.TS_ThreadAsyncScheduled;
 import com.tugalsan.api.unsafe.client.*;
+import static java.lang.System.out;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -28,16 +29,12 @@ public class Main {
 //        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
-        try {
-            nestedTest_pureJava(
-                    killTrigger,
-                    Duration.ofSeconds(8),
-                    Duration.ofSeconds(5),
-                    5
-            );//after 4_000 stackoverflow!
-        } catch (Exception e) {
-            d.ct("main", e);
-        }
+        nestedTest_pureJava(
+                killTrigger,
+                Duration.ofSeconds(8),
+                Duration.ofSeconds(5),
+                5
+        );//after 4_000 stackoverflow!
 //        nestedTest_legacyCode(killTrigger, Duration.ofSeconds(1), 4_000);
         d.cr("main", "waiting..");
         TS_ThreadWait.seconds("", killTrigger, 3);
@@ -45,10 +42,10 @@ public class Main {
 
     private static void nestedTest_pureJava(TS_ThreadSyncTrigger killTrigger, Duration untilTimeout, Duration workLoad, int nestedId) {
         if (nestedId < 0) {
-            d.cr("nestedTest_pureJava", "skip", nestedId);
+            out.println("nestedTest_pureJava -> skip -> " + nestedId);
             return;
         }
-        d.cr("nestedTest_pureJava", "begin", nestedId);
+        out.println("nestedTest_pureJava -> begin -> " + nestedId);
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
             scope.fork(() -> {
                 try {
@@ -64,7 +61,7 @@ public class Main {
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-        d.cr("nestedTest_pureJava", "end", nestedId);
+        out.println("nestedTest_pureJava -> end -> " + nestedId);
     }
 
     @Deprecated //NOT RESPECTING UNTIL !!!!!
