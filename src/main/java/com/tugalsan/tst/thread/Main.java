@@ -25,10 +25,25 @@ public class Main {
         TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of();
 //        scopeTestPure(killTrigger);
 //        scopeTest_ShutdownOnFailure(killTrigger);
-        scopeTest(killTrigger);
+//        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
+        nestedTest(killTrigger, 1_000_000);
+        d.cr("main", "waiting a minute");
         TS_ThreadWait.minutes("", killTrigger, 1);
+    }
+
+    @Deprecated //NOT RESPECTING UNTIL !!!!!
+    public static void nestedTest(TS_ThreadSyncTrigger killTrigger, int nestedId) {
+        d.cr("nestedTest", "begin", nestedId);
+        if (nestedId < 0) {
+            return;
+        }
+        d.cr("nestedTest", nestedId);
+        TS_ThreadAsyncAwait.runUntil(killTrigger, Duration.ofSeconds(0), kt -> {
+            nestedTest(killTrigger, nestedId - 1);
+        });
+        d.cr("nestedTest", "end", nestedId);
     }
 
     public static void untilTest(TS_ThreadSyncTrigger killTrigger) {
