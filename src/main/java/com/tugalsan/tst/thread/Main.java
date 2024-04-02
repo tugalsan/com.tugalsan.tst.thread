@@ -45,7 +45,8 @@ public class Main {
             return;
         }
         out.println("nestedTest_pureJava -> begin -> " + nestedId);
-        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+        var scope = new StructuredTaskScope.ShutdownOnFailure();
+        try {
             scope.fork(() -> {
                 Thread.sleep(workLoad);
                 return null;
@@ -54,7 +55,12 @@ public class Main {
             scope.throwIfFailed();
             nestedTest_pureJava(untilTimeout, workLoad, nestedId - 1);
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            if (e instanceof TimeoutException) {
+                scope.shutdown();
+            }
             throw new RuntimeException(e);
+        } finally {
+            scope.close();
         }
         out.println("nestedTest_pureJava -> end -> " + nestedId);
     }
