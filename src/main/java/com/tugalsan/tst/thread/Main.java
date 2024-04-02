@@ -47,11 +47,7 @@ public class Main {
         out.println("nestedTest_pureJava -> begin -> " + nestedId);
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
             scope.fork(() -> {
-                try {
-                    Thread.sleep(workLoad);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                Thread.sleep(workLoad);
                 return null;
             });
             scope.joinUntil(Instant.now().plusSeconds(untilTimeout.getSeconds()));
