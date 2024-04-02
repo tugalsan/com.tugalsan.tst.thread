@@ -30,7 +30,6 @@ public class Main {
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
         nestedTest_pureJava(
-                killTrigger,
                 Duration.ofSeconds(8),
                 Duration.ofSeconds(5),
                 5
@@ -40,7 +39,7 @@ public class Main {
         TS_ThreadWait.seconds("", killTrigger, 3);
     }
 
-    private static void nestedTest_pureJava(TS_ThreadSyncTrigger killTrigger, Duration untilTimeout, Duration workLoad, int nestedId) {
+    private static void nestedTest_pureJava(Duration untilTimeout, Duration workLoad, int nestedId) {
         if (nestedId < 0) {
             out.println("nestedTest_pureJava -> skip -> " + nestedId);
             return;
@@ -57,7 +56,7 @@ public class Main {
             });
             scope.joinUntil(Instant.now().plusSeconds(untilTimeout.getSeconds()));
             scope.throwIfFailed();
-            nestedTest_pureJava(killTrigger, untilTimeout, workLoad, nestedId - 1);
+            nestedTest_pureJava(untilTimeout, workLoad, nestedId - 1);
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             throw new RuntimeException(e);
         }
