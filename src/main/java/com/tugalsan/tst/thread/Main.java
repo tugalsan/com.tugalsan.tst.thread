@@ -10,6 +10,7 @@ import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.thread.server.async.TS_ThreadAsyncScheduled;
 import com.tugalsan.api.thread.server.async.core.TS_ThreadAsyncCoreSingle;
 import com.tugalsan.api.unsafe.client.*;
+import static java.lang.System.out;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -32,7 +33,7 @@ public class Main {
 //        nestedTest_pureJava(
 //                Duration.ofSeconds(8),
 //                Duration.ofSeconds(5),
-//                5
+//                1
 //        );//after 4_000 stackoverflow!
         nestedTest_onRequestReceivedFromAServlet();
 //        nestedTest_legacyCode(
@@ -135,33 +136,33 @@ public class Main {
         }
     }
 
-//    @Deprecated //NOT RESPECTING UNTIL !!!!!
-//    private static void nestedTest_pureJava(Duration untilTimeout, Duration workLoad, int nestedId) {
-//        if (nestedId < 0) {
-//            out.println("nestedTest_pureJava -> skip -> " + nestedId);
-//            return;
-//        }
-//        out.println("nestedTest_pureJava -> begin -> " + nestedId);
-//        var scope = new StructuredTaskScope.ShutdownOnFailure();
-//        try {
-//            scope.fork(() -> {
-//                Thread.sleep(workLoad);
-//                return null;
-//            });
-//            scope.joinUntil(Instant.now().plusSeconds(untilTimeout.getSeconds()));
-//            scope.throwIfFailed();
-//            nestedTest_pureJava(untilTimeout, workLoad, nestedId - 1);
-//        } catch (InterruptedException | TimeoutException | ExecutionException e) {
-//            if (e instanceof TimeoutException) {
-//                scope.shutdown();
-//            }
-//            throw new RuntimeException(e);
-//        } finally {
-//            scope.close();
-//        }
-//        out.println("nestedTest_pureJava -> end -> " + nestedId);
-//    }
-    @Deprecated //IT IS RESPECTING UNTIL, BUT I DONT KNOW WHY!!!!!
+    @Deprecated //NOT RESPECTING UNTIL !!!!!
+    private static void nestedTest_pureJava(Duration untilTimeout, Duration workLoad, int nestedId) {
+        if (nestedId < 0) {
+            out.println("nestedTest_pureJava -> skip -> " + nestedId);
+            return;
+        }
+        out.println("nestedTest_pureJava -> begin -> " + nestedId);
+        var scope = new StructuredTaskScope.ShutdownOnFailure();
+        try {
+            scope.fork(() -> {
+                Thread.sleep(workLoad);
+                return null;
+            });
+            scope.joinUntil(Instant.now().plusSeconds(untilTimeout.getSeconds()));
+            scope.throwIfFailed();
+            nestedTest_pureJava(untilTimeout, workLoad, nestedId - 1);
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            if (e instanceof TimeoutException) {
+                scope.shutdown();
+            }
+            throw new RuntimeException(e);
+        } finally {
+            scope.close();
+        }
+        out.println("nestedTest_pureJava -> end -> " + nestedId);
+    }
+
     private static TS_ThreadAsyncCoreSingle<Void> nestedTest_legacyCode(TS_ThreadSyncTrigger killTrigger, Duration untilTimeout, Duration workLoad, int nestedId) {
         d.cr("nestedTest_legacyCode", "begin", nestedId);
         if (nestedId < 0) {
