@@ -98,12 +98,14 @@ public class Main {
             }
             return new Union(false, null, subTask.get());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             if (e instanceof TimeoutException) {
                 scope.shutdown();
                 return new Union(true, e, null);
-            } else {
-                throw new RuntimeException(e);
             }
+            throw new RuntimeException(e);
         } finally {
             scope.close();
         }
@@ -125,12 +127,14 @@ public class Main {
             }
             return new Union(false, null, subTask.get());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             if (e instanceof TimeoutException) {
                 scope.shutdown();
                 return new Union(true, e, null);
-            } else {
-                throw new RuntimeException(e);
             }
+            throw new RuntimeException(e);
         } finally {
             scope.close();
         }
@@ -153,6 +157,9 @@ public class Main {
             scope.throwIfFailed();
             nestedTest_pureJava(untilTimeout, workLoad, nestedId - 1);
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             if (e instanceof TimeoutException) {
                 scope.shutdown();
             }
