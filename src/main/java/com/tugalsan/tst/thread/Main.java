@@ -41,42 +41,43 @@ public class Main {
 //                Duration.ofSeconds(1),
 //                4_000
 //        );//after 4_000 stackoverflow!
-        d.cr("main", "waiting..");
-        TS_ThreadWait.seconds("", killTrigger, 3);
+//        d.cr("main", "waiting..");
+//        TS_ThreadWait.seconds("", killTrigger, 3);
     }
 
-    private record Union<T>(Throwable error, T result) {
+    private record Union<T>(boolean timeout, Throwable error, T result) {
 
     }
 
-    @Deprecated //NOT RESPECTING UNTIL !!!!!
     private static void nestedTest_onRequestReceivedFromAServlet() {
-        var durTimeout = Duration.ofSeconds(8);
+        var durTimeoutServlet = Duration.ofSeconds(8);
         var scope = new StructuredTaskScope.ShutdownOnFailure();
         try {
             var subTask = scope.fork(() -> {
                 return nestedTest_onRequestReceivedFromAServlet_fetchFromUrl();
             });
-            scope.joinUntil(Instant.now().plusSeconds(durTimeout.getSeconds()));
+            scope.joinUntil(Instant.now().plusSeconds(durTimeoutServlet.getSeconds()));
             scope.throwIfFailed();
             if (subTask.state() == StructuredTaskScope.Subtask.State.FAILED) {
-            System.out.println("subTask.exception(): " + subTask.exception().getMessage());
+                System.out.println("subTask.exception(): " + subTask.exception().getMessage());
                 return;
             }
             System.out.println("subTask.get(): " + subTask.get());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             if (e instanceof TimeoutException) {
                 scope.shutdown();
+                System.out.println("Error: timeout");
+            } else {
+                e.printStackTrace();
             }
-            throw new RuntimeException(e);
         } finally {
             scope.close();
         }
     }
 
     private static Union<String> nestedTest_onRequestReceivedFromAServlet_fetchFromUrl() {
-        var durTimeout = Duration.ofSeconds(5);
-        var durWorkload = Duration.ofSeconds(1);
+        var durTimeoutFetchFromUrl = Duration.ofSeconds(5);
+        var durWorkloadFetchFromUrl = Duration.ofSeconds(1);
         var scope = new StructuredTaskScope.ShutdownOnFailure();
         try {
             var subTask = scope.fork(() -> {
@@ -84,47 +85,51 @@ public class Main {
                 var dbData2 = nestedTest_onRequestReceivedFromAServlet_fetchFromUrl_fetchDataFromDB().toString();
                 String downloadedTextAccroding2DbData;
                 {//downloading file...
-                    Thread.sleep(durWorkload);
+                    Thread.sleep(durWorkloadFetchFromUrl);
                     downloadedTextAccroding2DbData = dbData1 + dbData2;
                 }
                 return downloadedTextAccroding2DbData;
             });
-            scope.joinUntil(Instant.now().plusSeconds(durTimeout.getSeconds()));
+            scope.joinUntil(Instant.now().plusSeconds(durTimeoutFetchFromUrl.getSeconds()));
             scope.throwIfFailed();
             if (subTask.state() == StructuredTaskScope.Subtask.State.FAILED) {
-                return new Union(subTask.exception(), null);
+                return new Union(false, subTask.exception(), null);
             }
-            return new Union(null, subTask.get());
+            return new Union(false, null, subTask.get());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             if (e instanceof TimeoutException) {
                 scope.shutdown();
+                return new Union(true, e, null);
+            } else {
+                throw new RuntimeException(e);
             }
-            throw new RuntimeException(e);
         } finally {
             scope.close();
         }
     }
 
     private static Union<String> nestedTest_onRequestReceivedFromAServlet_fetchFromUrl_fetchDataFromDB() {
-        var durTimeout = Duration.ofSeconds(5);
-        var durWorkload = Duration.ofSeconds(1);
+        var durTimeoutfetchFromDb = Duration.ofSeconds(5);
+        var durWorkloadfetchFromDb = Duration.ofSeconds(10);
         var scope = new StructuredTaskScope.ShutdownOnFailure();
         try {
             var subTask = scope.fork(() -> {
-                Thread.sleep(durWorkload);
+                Thread.sleep(durWorkloadfetchFromDb);
                 return String.valueOf(System.currentTimeMillis());
             });
-            scope.joinUntil(Instant.now().plusSeconds(durTimeout.getSeconds()));
+            scope.joinUntil(Instant.now().plusSeconds(durTimeoutfetchFromDb.getSeconds()));
             scope.throwIfFailed();
             if (subTask.state() == StructuredTaskScope.Subtask.State.FAILED) {
-                return new Union(subTask.exception(), null);
+                return new Union(false, subTask.exception(), null);
             }
-            return new Union(null, subTask.get());
+            return new Union(false, null, subTask.get());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             if (e instanceof TimeoutException) {
                 scope.shutdown();
+                return new Union(true, e, null);
+            } else {
+                throw new RuntimeException(e);
             }
-            throw new RuntimeException(e);
         } finally {
             scope.close();
         }
