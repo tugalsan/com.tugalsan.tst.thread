@@ -9,7 +9,6 @@ import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.thread.server.async.TS_ThreadAsyncScheduled;
 import com.tugalsan.api.thread.server.async.core.TS_ThreadAsyncCoreSingle;
-import com.tugalsan.api.union.client.TGS_UnionUtils;
 import static java.lang.System.out;
 import java.time.*;
 import java.util.*;
@@ -359,8 +358,7 @@ public class Main {
                         TS_ThreadWait.seconds(d.className, killTrigger, 1);
                     });
                     d.cr("completed", "3");
-                    TGS_UnionUtils.throwAsRuntimeException(d.className, "Callable", "3");
-                    return "3";
+                    throw new RuntimeException("Callable 3");
                 }
         );
 
