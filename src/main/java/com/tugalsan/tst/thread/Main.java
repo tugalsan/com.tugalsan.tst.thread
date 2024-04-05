@@ -9,7 +9,7 @@ import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.thread.server.async.TS_ThreadAsyncScheduled;
 import com.tugalsan.api.thread.server.async.core.TS_ThreadAsyncCoreSingle;
-import com.tugalsan.api.unsafe.client.*;
+import com.tugalsan.api.union.client.TGS_UnionUtils;
 import static java.lang.System.out;
 import java.time.*;
 import java.util.*;
@@ -30,12 +30,12 @@ public class Main {
 //        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
-//        nestedTest_pureJava(
-//                Duration.ofSeconds(8),
-//                Duration.ofSeconds(5),
-//                1
-//        );//after 4_000 stackoverflow!
-        nestedTest_onRequestReceivedFromAServlet();
+        nestedTest_pureJava(
+                Duration.ofSeconds(8),
+                Duration.ofSeconds(5),
+                1
+        );//after 4_000 stackoverflow!
+//        nestedTest_onRequestReceivedFromAServlet();
 //        nestedTest_legacyCode(
 //                killTrigger,
 //                Duration.ofSeconds(8),
@@ -140,7 +140,6 @@ public class Main {
         }
     }
 
-    @Deprecated //NOT RESPECTING UNTIL !!!!!
     private static void nestedTest_pureJava(Duration untilTimeout, Duration workLoad, int nestedId) {
         if (nestedId < 0) {
             out.println("nestedTest_pureJava -> skip -> " + nestedId);
@@ -151,11 +150,12 @@ public class Main {
         try {
             scope.fork(() -> {
                 Thread.sleep(workLoad);
+                nestedTest_pureJava(untilTimeout, workLoad, nestedId - 1);
                 return null;
             });
             scope.joinUntil(Instant.now().plusSeconds(untilTimeout.getSeconds()));
             scope.throwIfFailed();
-            nestedTest_pureJava(untilTimeout, workLoad, nestedId - 1);
+
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
@@ -359,7 +359,7 @@ public class Main {
                         TS_ThreadWait.seconds(d.className, killTrigger, 1);
                     });
                     d.cr("completed", "3");
-                    TGS_UnSafe.thrw(d.className, "Callable", "3");
+                    TGS_UnionUtils.throwAsRuntimeException(d.className, "Callable", "3");
                     return "3";
                 }
         );
