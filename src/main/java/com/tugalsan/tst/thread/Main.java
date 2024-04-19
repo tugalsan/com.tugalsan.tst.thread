@@ -30,9 +30,9 @@ public class Main {
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
         nestedTest_pureJava(
-                Duration.ofSeconds(8),
-                Duration.ofSeconds(5),
-                1
+                Duration.ofSeconds(80000),
+                Duration.ofSeconds(0),
+                1_000_000
         );//after 4_000 stackoverflow!
 //        nestedTest_onRequestReceivedFromAServlet();
 //        nestedTest_legacyCode(
@@ -144,7 +144,7 @@ public class Main {
             out.println("nestedTest_pureJava -> skip -> " + nestedId);
             return;
         }
-        out.println("nestedTest_pureJava -> begin -> " + nestedId);
+//        out.println("nestedTest_pureJava -> begin -> " + nestedId);
         var scope = new StructuredTaskScope.ShutdownOnFailure();
         try {
             scope.fork(() -> {
