@@ -46,7 +46,7 @@ public class Main {
             if (t.hasError()) {
                 d.ce("main.nestedTest_legacyCode", t.elapsed.getSeconds(), "timeout?", t.timeout(), t.exceptionIfFailed.get());
             } else {
-                d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.get());
+                d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.isPresent() ? t.resultIfSuccessful.get() : "result is void");
             }
         }
 //        d.cr("main", "waiting..");
