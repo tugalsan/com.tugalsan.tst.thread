@@ -35,13 +35,20 @@ public class Main {
 //                1_000_000
 //        );
 //        nestedTest_onRequestReceivedFromAServlet();
-        nestedTest_legacyCode(
-                killTrigger,
-                Duration.ofSeconds(20),
-                Duration.ofSeconds(1),
-                3,
-                4_000
-        );
+        {
+            var t = nestedTest_legacyCode(
+                    killTrigger,
+                    Duration.ofSeconds(20),
+                    Duration.ofSeconds(1),
+                    0,
+                    4_000
+            );
+            if (t.hasError()){
+                d.ce("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.exceptionIfFailed.get());
+            } else {
+                d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.get());
+            }
+        }
 //        d.cr("main", "waiting..");
 //        TS_ThreadWait.seconds("", killTrigger, 3);
     }
