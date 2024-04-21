@@ -29,18 +29,19 @@ public class Main {
 //        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
-        nestedTest_pureJava(
-                Duration.ofSeconds(80000),
-                Duration.ofSeconds(0),
-                1_000_000
-        );//after 4_000 stackoverflow!
+//        nestedTest_pureJava(
+//                Duration.ofSeconds(80000),
+//                Duration.ofSeconds(0),
+//                1_000_000
+//        );
 //        nestedTest_onRequestReceivedFromAServlet();
-//        nestedTest_legacyCode(
-//                killTrigger,
-//                Duration.ofSeconds(8),
-//                Duration.ofSeconds(1),
-//                4_000
-//        );//after 4_000 stackoverflow!
+        nestedTest_legacyCode(
+                killTrigger,
+                Duration.ofSeconds(20),
+                Duration.ofSeconds(1),
+                3,
+                4_000
+        );
 //        d.cr("main", "waiting..");
 //        TS_ThreadWait.seconds("", killTrigger, 3);
     }
@@ -169,21 +170,26 @@ public class Main {
         out.println("nestedTest_pureJava -> end -> " + nestedId);
     }
 
-    private static TS_ThreadAsyncCoreSingle<Void> nestedTest_legacyCode(TS_ThreadSyncTrigger killTrigger, Duration untilTimeout, Duration workLoad, int nestedId) {
-        d.cr("nestedTest_legacyCode", "begin", nestedId);
+    private static TS_ThreadAsyncCoreSingle<Void> nestedTest_legacyCode(TS_ThreadSyncTrigger killTrigger, Duration untilTimeout, Duration workLoad, int stepSeconds, int nestedId) {
+        d.cr("nestedTest_legacyCode", nestedId, "begin");
         if (nestedId < 0) {
             return null;
         }
         var t = TS_ThreadAsyncAwait.runUntil(killTrigger, untilTimeout, kt -> {
-            TS_ThreadWait.of("nestedTest_legacyCode", killTrigger, workLoad);
-            var _t = nestedTest_legacyCode(killTrigger, untilTimeout, workLoad, nestedId - 1);
+            TS_ThreadWait.of("nestedTest_legacyCode_" + nestedId, killTrigger, workLoad);
+            var f_untilTimeout = untilTimeout.minusSeconds(stepSeconds);
+            if (f_untilTimeout.isZero() || f_untilTimeout.isNegative()) {
+                f_untilTimeout = Duration.ofSeconds(1);
+            }
+            d.ce("nestedTest_legacyCode", nestedId, "until", f_untilTimeout.getSeconds());
+            var _t = nestedTest_legacyCode(killTrigger, f_untilTimeout, workLoad, stepSeconds, nestedId - 1);
             if (_t == null) {
-                d.ce("nestedTest_legacyCode", "_t==null", nestedId - 1);
+                d.ce("nestedTest_legacyCode", nestedId, "_t==null", nestedId - 1);
                 return;
             }
-            d.ce("nestedTest_legacyCode", "elapsed", nestedId - 1, _t.elapsed.getSeconds());
+            d.ce("nestedTest_legacyCode", nestedId, "elapsed", _t.elapsed.getSeconds());
         });
-        d.cr("nestedTest", "end", nestedId);
+        d.cr("nestedTest", nestedId, "end");
         return t;
     }
 
