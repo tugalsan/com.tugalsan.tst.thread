@@ -191,10 +191,15 @@ public class Main {
             d.ce("nestedTest_legacyCode", nestedId, "until", f_untilTimeout.getSeconds());
             var _t = nestedTest_legacyCode(killTrigger, f_untilTimeout, workLoad, stepSeconds, nestedId - 1);
             if (_t == null) {
-                d.ce("nestedTest_legacyCode", nestedId, "_t==null", nestedId - 1);
+                d.cr("nestedTest_legacyCode", nestedId, "_t==null", nestedId - 1);
                 return;
+            } else {
+                if (_t.hasError()) {
+                    d.ce("main.nestedTest_legacyCode", nestedId, _t.elapsed.getSeconds(), "timeout?", _t.timeout(), _t.exceptionIfFailed.get());
+                } else {
+                    d.cr("main.nestedTest_legacyCode", nestedId, _t.elapsed.getSeconds(), _t.resultIfSuccessful.isPresent() ? _t.resultIfSuccessful.get() : "result is void");
+                }
             }
-            d.ce("nestedTest_legacyCode", nestedId, "elapsed", _t.elapsed.getSeconds());
         });
         d.cr("nestedTest", nestedId, "end");
         return t;
