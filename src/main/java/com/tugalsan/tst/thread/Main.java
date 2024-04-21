@@ -196,6 +196,7 @@ public class Main {
             } else {
                 if (_t.hasError()) {
                     d.ce("main.nestedTest_legacyCode", nestedId, _t.elapsed.getSeconds(), "timeout?", _t.timeout(), _t.exceptionIfFailed.get());
+//                    Thread.currentThread().interrupt();
                 } else {
                     d.cr("main.nestedTest_legacyCode", nestedId, _t.elapsed.getSeconds(), _t.resultIfSuccessful.isPresent() ? _t.resultIfSuccessful.get() : "result is void");
                 }
