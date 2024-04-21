@@ -40,11 +40,11 @@ public class Main {
                     killTrigger,
                     Duration.ofSeconds(20),
                     Duration.ofSeconds(1),
-                    0,
+                    3,//TRY 0 or 3
                     4_000
             );
-            if (t.hasError()){
-                d.ce("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.exceptionIfFailed.get());
+            if (t.hasError()) {
+                d.ce("main.nestedTest_legacyCode", t.elapsed.getSeconds(), "timeout?", t.timeout(), t.exceptionIfFailed.get());
             } else {
                 d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.get());
             }
