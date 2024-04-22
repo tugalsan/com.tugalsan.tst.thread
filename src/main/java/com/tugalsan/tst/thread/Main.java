@@ -26,7 +26,7 @@ public class Main {
         TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of();
 //        scopeTestPure(killTrigger);
 //        scopeTest_ShutdownOnFailure(killTrigger);
-//        scopeTest(killTrigger);
+        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
 //        nestedTest_pureJava(
@@ -35,22 +35,22 @@ public class Main {
 //                1_000_000
 //        );
 //        nestedTest_onRequestReceivedFromAServlet();
-        {
-            var t = nestedTest_legacyCode(
-                    killTrigger,
-                    Duration.ofSeconds(20),
-                    Duration.ofSeconds(1),
-                    3,//TRY 0 or 3
-                    4_000
-            );
-            if (t.hasError()) {
-                d.ce("main.nestedTest_legacyCode", t.elapsed.getSeconds(), "timeout?", t.timeout(), t.exceptionIfFailed.get());
-            } else {
-                d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.isPresent() ? t.resultIfSuccessful.get() : "result is void");
-            }
-        }
-//        d.cr("main", "waiting..");
-//        TS_ThreadWait.seconds("", killTrigger, 3);
+//        {
+//            var t = nestedTest_legacyCode(
+//                    killTrigger,
+//                    Duration.ofSeconds(20),
+//                    Duration.ofSeconds(1),
+//                    3,//TRY 0 or 3
+//                    4_000
+//            );
+//            if (t.hasError()) {
+//                d.ce("main.nestedTest_legacyCode", t.elapsed.getSeconds(), "timeout?", t.timeout(), t.exceptionIfFailed.get());
+//            } else {
+//                d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.isPresent() ? t.resultIfSuccessful.get() : "result is void");
+//            }
+//        }
+        d.cr("main", "waiting..");
+        TS_ThreadWait.seconds("", killTrigger, 3);
     }
 
     private record Union<T>(boolean timeout, Throwable error, T result) {
@@ -381,7 +381,7 @@ public class Main {
                 }
         );
 
-        if (false) {
+        if (true) {
             d.cr("------- parallel.FOREVER -------");
             var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger, null, callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
@@ -389,7 +389,7 @@ public class Main {
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
-        if (false) {
+        if (true) {
             d.cr("------- parallel.TIMED -------");
             var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger, Duration.ofSeconds(1), callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
@@ -397,7 +397,7 @@ public class Main {
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
         }
 
-        if (false) {
+        if (true) {
             d.cr("------- parallelUntilFirstSuccess.FOREVER -------");
             var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger, null, callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
@@ -406,7 +406,7 @@ public class Main {
             d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
-        if (false) {
+        if (true) {
             d.cr("------- parallelUntilFirstSuccess.TIMED -------");
             var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger, Duration.ofSeconds(1), callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
@@ -415,7 +415,7 @@ public class Main {
             d.cr("fetchFirst.states()", fetchFirst.states);
         }
 
-        if (false) {
+        if (true) {
             d.cr("------- parallelUntilFirstFail.FOREVER -------");
             var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger, null, callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
@@ -432,14 +432,14 @@ public class Main {
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
             d.cr("fetchFail.states()", fetchFail.states);
         }
-        if (false) {
+        if (true) {
             d.cr("------- callSingle.TIMED -------");
             var fetchFail = TS_ThreadAsyncAwait.callSingle(killTrigger, Duration.ofSeconds(5), callables.get(0));
             d.cr("fetchFail.resultIfSuccessful", fetchFail.resultIfSuccessful);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptionIfFailed.stream().forEach(e -> d.cr("fetchFail.e", e.getMessage()));
         }
-        if (false) {
+        if (true) {
             d.cr("------- everySeconds.killTriggered -------");
             TS_ThreadAsyncScheduled.everySeconds(killTrigger, Duration.ofHours(1), true, 5, kt -> d.ce("everySeconds", "tick"));
             TS_ThreadWait.seconds("everySeconds", killTrigger, 5);
