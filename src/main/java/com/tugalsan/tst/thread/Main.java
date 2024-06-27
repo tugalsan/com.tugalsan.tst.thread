@@ -1,6 +1,6 @@
 package com.tugalsan.tst.thread;
 
-import com.tugalsan.api.callable.client.TGS_CallableType1;
+import com.tugalsan.api.function.client.TGS_Func_OutTyped_In1;
 import com.tugalsan.api.thread.server.async.TS_ThreadAsyncAwait;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.random.client.*;
@@ -351,7 +351,7 @@ public class Main {
 
     private static void scopeTest(TS_ThreadSyncTrigger killTrigger) {
 
-        List<TGS_CallableType1<String, TS_ThreadSyncTrigger>> callables = List.of(
+        List<TGS_Func_OutTyped_In1<String, TS_ThreadSyncTrigger>> callables = List.of(
                 kt -> {
                     d.cr("fetcing...", "1");
                     IntStream.range(0, 15).forEachOrdered(i -> {
