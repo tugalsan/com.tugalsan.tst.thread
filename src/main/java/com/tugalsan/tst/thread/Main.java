@@ -26,7 +26,7 @@ public class Main {
         TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of();
 //        scopeTestPure(killTrigger);
 //        scopeTest_ShutdownOnFailure(killTrigger);
-        scopeTest(killTrigger);
+//        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
 //        nestedTest_pureJava(
@@ -49,6 +49,16 @@ public class Main {
 //                d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.isPresent() ? t.resultIfSuccessful.get() : "result is void");
 //            }
 //        }
+
+        var u = TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow(killTrigger, Duration.ofSeconds(10), true, 0, 30, kt -> {
+            d.cr("a", "tickk");
+        });
+        if (u.isExcuse()) {
+            d.ct("a", u.excuse());
+        } else {
+            d.cr("a", "success");
+        }
+
         d.cr("main", "waiting..");
         TS_ThreadWait.seconds("", killTrigger, 3);
     }

@@ -4,8 +4,6 @@ module com.tugalsan.tst.thread {
     requires com.tugalsan.api.function;
     requires com.tugalsan.api.random;
     requires com.tugalsan.api.union;
-    requires com.tugalsan.api.runnable;
-    requires com.tugalsan.api.validator;
     requires com.tugalsan.api.tuple;
     requires com.tugalsan.api.thread;
 }
