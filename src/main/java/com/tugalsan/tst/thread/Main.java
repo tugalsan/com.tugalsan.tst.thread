@@ -50,19 +50,39 @@ public class Main {
 //                d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.isPresent() ? t.resultIfSuccessful.get() : "result is void");
 //            }
 //        }
-
-        var u = TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
-            d.cr("a", "tickk", TGS_Time.of().toString());
-        });
-        if (u.isExcuse()) {
-            d.ct("a", u.excuse());
+        if (!scheduledTest_everyMinutes_whenSecondShow(killTrigger)) {
             return;
-        } else {
-            d.cr("a", "success");
         }
+//        if (!scheduledTest_everyHours_whenMinuteShow(killTrigger)) {
+//            return;
+//        }
 
         d.cr("main", "waiting..");
         TS_ThreadWait.hours("", killTrigger, 1);
+    }
+
+    private static boolean scheduledTest_everyMinutes_whenSecondShow(TS_ThreadSyncTrigger killTrigger) {
+        var u = TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
+            d.cr("scheduledTest_everyMinutes_whenSecondShow", "periodic tick", TGS_Time.of().toString());
+        });
+        if (u.isExcuse()) {
+            d.ct("scheduledTest_everyMinutes_whenSecondShow", u.excuse());
+            return false;
+        }
+        d.cr("scheduledTest_everyMinutes_whenSecondShow", "scheduling successful");
+        return true;
+    }
+
+    private static boolean scheduledTest_everyHours_whenMinuteShow(TS_ThreadSyncTrigger killTrigger) {
+        var u = TS_ThreadAsyncScheduled.everyHours_whenMinuteShow(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
+            d.cr("scheduledTest_everyHours_whenMinuteShow", "periodic tick", TGS_Time.of().toString());
+        });
+        if (u.isExcuse()) {
+            d.ct("scheduledTest_everyHours_whenMinuteShow", u.excuse());
+            return false;
+        }
+        d.cr("scheduledTest_everyHours_whenMinuteShow", "scheduling successful");
+        return true;
     }
 
     private record Union<T>(boolean timeout, Throwable error, T result) {
