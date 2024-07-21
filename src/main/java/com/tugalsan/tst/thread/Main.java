@@ -9,6 +9,7 @@ import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.TS_ThreadWait;
 import com.tugalsan.api.thread.server.async.TS_ThreadAsyncScheduled;
 import com.tugalsan.api.thread.server.async.core.TS_ThreadAsyncCoreSingle;
+import com.tugalsan.api.time.client.TGS_Time;
 import static java.lang.System.out;
 import java.time.*;
 import java.util.*;
@@ -51,7 +52,7 @@ public class Main {
 //        }
 
         var u = TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
-            d.cr("a", "tickk");
+            d.cr("a", "tickk", TGS_Time.of().toString());
         });
         if (u.isExcuse()) {
             d.ct("a", u.excuse());

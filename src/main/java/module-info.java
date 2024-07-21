@@ -6,4 +6,5 @@ module com.tugalsan.tst.thread {
     requires com.tugalsan.api.union;
     requires com.tugalsan.api.tuple;
     requires com.tugalsan.api.thread;
+    requires com.tugalsan.api.time;
 }
