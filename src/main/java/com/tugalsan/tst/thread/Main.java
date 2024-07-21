@@ -50,11 +50,12 @@ public class Main {
 //            }
 //        }
 
-        var u = TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow(killTrigger, Duration.ofSeconds(10), true, 0, 30, kt -> {
+        var u = TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
             d.cr("a", "tickk");
         });
         if (u.isExcuse()) {
             d.ct("a", u.excuse());
+            return;
         } else {
             d.cr("a", "success");
         }
