@@ -60,7 +60,7 @@ public class Main {
         }
 
         d.cr("main", "waiting..");
-        TS_ThreadWait.seconds("", killTrigger, 3);
+        TS_ThreadWait.hours("", killTrigger, 1);
     }
 
     private record Union<T>(boolean timeout, Throwable error, T result) {
