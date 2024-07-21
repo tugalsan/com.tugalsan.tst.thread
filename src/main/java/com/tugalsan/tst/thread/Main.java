@@ -50,15 +50,15 @@ public class Main {
 //                d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.isPresent() ? t.resultIfSuccessful.get() : "result is void");
 //            }
 //        }
-        if (!scheduledTest_everyMinutes_whenSecondShow(killTrigger)) {
-            return;
-        }
-//        if (!scheduledTest_everyHours_whenMinuteShow(killTrigger)) {
+//        if (!scheduledTest_everyMinutes_whenSecondShow(killTrigger)) {
 //            return;
 //        }
+        if (!scheduledTest_everyHours_whenMinuteShow(killTrigger)) {
+            return;
+        }
 
         d.cr("main", "waiting..");
-        TS_ThreadWait.hours("", killTrigger, 1);
+        TS_ThreadWait.hours("", killTrigger, 5);
     }
 
     private static boolean scheduledTest_everyMinutes_whenSecondShow(TS_ThreadSyncTrigger killTrigger) {
