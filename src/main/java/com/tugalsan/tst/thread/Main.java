@@ -50,10 +50,10 @@ public class Main {
 //                d.cr("main.nestedTest_legacyCode", t.elapsed.getSeconds(), t.resultIfSuccessful.isPresent() ? t.resultIfSuccessful.get() : "result is void");
 //            }
 //        }
-//        if (!scheduledTest_everyMinutes_whenSecondShow(killTrigger)) {
+//        if (!scheduledTest_everyMinutes_whenSecondShow_willBlockAtFirst(killTrigger)) {
 //            return;
 //        }
-        if (!scheduledTest_everyHours_whenMinuteShow(killTrigger)) {
+        if (!scheduledTest_everyHours_whenMinuteShow_willBlockAtFirst(killTrigger)) {
             return;
         }
 
@@ -61,27 +61,27 @@ public class Main {
         TS_ThreadWait.hours("", killTrigger, 5);
     }
 
-    private static boolean scheduledTest_everyMinutes_whenSecondShow(TS_ThreadSyncTrigger killTrigger) {
-        var u = TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
-            d.cr("scheduledTest_everyMinutes_whenSecondShow", "periodic tick", TGS_Time.of().toString());
+    private static boolean scheduledTest_everyMinutes_whenSecondShow_willBlockAtFirst(TS_ThreadSyncTrigger killTrigger) {
+        var u = TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow_willBlockAtFirst(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
+            d.cr("scheduledTest_everyMinutes_whenSecondShow_willBlockAtFirst", "periodic tick", TGS_Time.of().toString());
         });
         if (u.isExcuse()) {
-            d.ct("scheduledTest_everyMinutes_whenSecondShow", u.excuse());
+            d.ct("scheduledTest_everyMinutes_whenSecondShow_willBlockAtFirst", u.excuse());
             return false;
         }
-        d.cr("scheduledTest_everyMinutes_whenSecondShow", "scheduling successful");
+        d.cr("scheduledTest_everyMinutes_whenSecondShow_willBlockAtFirst", "scheduling successful");
         return true;
     }
 
-    private static boolean scheduledTest_everyHours_whenMinuteShow(TS_ThreadSyncTrigger killTrigger) {
-        var u = TS_ThreadAsyncScheduled.everyHours_whenMinuteShow(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
-            d.cr("scheduledTest_everyHours_whenMinuteShow", "periodic tick", TGS_Time.of().toString());
+    private static boolean scheduledTest_everyHours_whenMinuteShow_willBlockAtFirst(TS_ThreadSyncTrigger killTrigger) {
+        var u = TS_ThreadAsyncScheduled.everyHours_whenMinuteShow_willBlockAtFirst(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
+            d.cr("scheduledTest_everyHours_whenMinuteShow_willBlockAtFirst", "periodic tick", TGS_Time.of().toString());
         });
         if (u.isExcuse()) {
-            d.ct("scheduledTest_everyHours_whenMinuteShow", u.excuse());
+            d.ct("scheduledTest_everyHours_whenMinuteShow_willBlockAtFirst", u.excuse());
             return false;
         }
-        d.cr("scheduledTest_everyHours_whenMinuteShow", "scheduling successful");
+        d.cr("scheduledTest_everyHours_whenMinuteShow_willBlockAtFirst", "scheduling successful");
         return true;
     }
 
