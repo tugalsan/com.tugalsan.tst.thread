@@ -25,9 +25,18 @@
                     <groupId>org.w3c.css</groupId>
                     <artifactId>sac</artifactId>
                 </exclusion>   
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
             </exclusions>
             <version>2.12.1</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.18.0</version>
+        </dependency>  
 
         <dependency>
             <groupId>${project.groupId}</groupId>
