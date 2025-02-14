@@ -1,5 +1,6 @@
 package com.tugalsan.tst.thread;
 
+import com.tugalsan.api.function.client.maythrow.uncheckedexceptions.TGS_FuncMTUCEUtils;
 import com.tugalsan.api.function.client.maythrow.uncheckedexceptions.TGS_FuncMTUCE_OutTyped_In1;
 import com.tugalsan.api.thread.server.async.await.TS_ThreadAsyncAwait;
 import com.tugalsan.api.log.server.*;
@@ -162,7 +163,7 @@ public class Main {
                 scope.shutdown();
                 return new Union(true, e, null);
             }
-            throw new RuntimeException(e);
+            return TGS_FuncMTUCEUtils.thrw(e);
         } finally {
             scope.close();
         }
@@ -191,7 +192,7 @@ public class Main {
                 scope.shutdown();
                 return new Union(true, e, null);
             }
-            throw new RuntimeException(e);
+            return TGS_FuncMTUCEUtils.thrw(e);
         } finally {
             scope.close();
         }
@@ -220,7 +221,7 @@ public class Main {
             if (e instanceof TimeoutException) {
                 scope.shutdown();
             }
-            throw new RuntimeException(e);
+            TGS_FuncMTUCEUtils.thrw(e);
         } finally {
             scope.close();
         }
@@ -344,7 +345,7 @@ public class Main {
             try {
                 Thread.sleep(duration);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                TGS_FuncMTUCEUtils.thrw(e);
             }
         };
         Callable<String> callableBlocking = () -> {
