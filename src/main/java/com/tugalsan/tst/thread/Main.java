@@ -28,7 +28,7 @@ public class Main {
         TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of();
 //        scopeTestPure(killTrigger);
 //        scopeTest_ShutdownOnFailure(killTrigger);
-//        scopeTest(killTrigger);
+        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
 //        nestedTest_pureJava(
