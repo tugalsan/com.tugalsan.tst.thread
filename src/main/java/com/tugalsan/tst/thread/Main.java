@@ -25,10 +25,10 @@ public class Main {
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
-        TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of();
-//        scopeTestPure(killTrigger);
-//        scopeTest_ShutdownOnFailure(killTrigger);
-        scopeTest(killTrigger);
+        TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of("main");
+//        scopeTest_ShutdownOnFailure_waitWithException(killTrigger);
+        scopeTest_ShutdownOnFailure(killTrigger);
+//        scopeTest(killTrigger);
 //        threadLocalRandomTest(killTrigger);
 //        untilTest(killTrigger);
 //        nestedTest_pureJava(
@@ -58,47 +58,48 @@ public class Main {
 //            return;
 //        }
 
-        untilTest(killTrigger);
-
+//        untilTest(killTrigger);
         d.cr("main", "done..");
-//        d.cr("main", "waiting..");
-//        TS_ThreadWait.hours("", killTrigger, 5);
+        d.cr("main", "waiting..");
+        TS_ThreadSyncWait.hours("", killTrigger, 5);
     }
 
     private static void scopeTest_ShutdownOnFailure(TS_ThreadSyncTrigger killTrigger) {
         Callable<String> callableBlocking = () -> {
+            TS_ThreadSyncWait.seconds(d.className, killTrigger, 4);
+            if (true) {
+                throw new RuntimeException("hah");
+            }
             while (true) {
                 d.cr("scopeTest_ShutdownOnFailure", "tick", System.currentTimeMillis());
                 TS_ThreadSyncWait.seconds(d.className, killTrigger, 1);
             }
         };
-        var scope = new StructuredTaskScope.ShutdownOnFailure();
-        try {
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
             var future = scope.fork(callableBlocking);
-            scope.joinUntil(Instant.now().plusSeconds(1));
+//            scope.joinUntil(Instant.now().plusSeconds(1));
+            scope.join();
             scope.throwIfFailed();
             d.cr("scopeTest_ShutdownOnFailure", "result", future.get());
-        } catch (InterruptedException | TimeoutException | ExecutionException e) {
-            d.ce("scopeTest_ShutdownOnFailure", "catch", e.getMessage());
-            if (e instanceof TimeoutException) {
-                d.cr("scopeTest_ShutdownOnFailure", "timeout", "shutdown triggered");
-                scope.shutdown();
-            }
-        } finally {
-            scope.close();
+        } catch (InterruptedException | ExecutionException/*| TimeoutException*/ e) {
+//            if (e instanceof TimeoutException) {
+//                d.cr("scopeTest_ShutdownOnFailure", "timeout", "shutdown triggered");
+//                return;
+//            }
+            d.ct("scopeTest_ShutdownOnFailure", e);
         }
 
     }
 
     private static boolean scheduledTest_everyMinutes_whenSecondShow(TS_ThreadSyncTrigger killTrigger) {
-        TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
+        TS_ThreadAsyncScheduled.everyMinutes_whenSecondShow(killTrigger.newChild("scheduledTest_everyMinutes_whenSecondShow"), Duration.ofSeconds(10), true, 1, 30, kt -> {
             d.cr("scheduledTest_everyMinutes_whenSecondShow", "periodic tick", TGS_Time.of().toString());
         });
         return true;
     }
 
     private static boolean scheduledTest_everyHours_whenMinuteShow(TS_ThreadSyncTrigger killTrigger) {
-        TS_ThreadAsyncScheduled.everyHours_whenMinuteShow(killTrigger, Duration.ofSeconds(10), true, 1, 30, kt -> {
+        TS_ThreadAsyncScheduled.everyHours_whenMinuteShow(killTrigger.newChild("scheduledTest_everyHours_whenMinuteShow"), Duration.ofSeconds(10), true, 1, 30, kt -> {
             d.cr("scheduledTest_everyHours_whenMinuteShow", "periodic tick", TGS_Time.of().toString());
         });
         return true;
@@ -233,7 +234,7 @@ public class Main {
         if (nestedId < 0) {
             return null;
         }
-        var t = TS_ThreadAsyncAwait.runUntil(killTrigger, untilTimeout, kt -> {
+        var t = TS_ThreadAsyncAwait.runUntil(killTrigger.newChild("nestedTest_legacyCode"), untilTimeout, kt -> {
             TS_ThreadSyncWait.of("nestedTest_legacyCode_" + nestedId, killTrigger, workLoad);
             var f_untilTimeout = untilTimeout.minusSeconds(stepSeconds);
             if (f_untilTimeout.isZero() || f_untilTimeout.isNegative()) {
@@ -259,14 +260,14 @@ public class Main {
 
     private static void untilTest(TS_ThreadSyncTrigger killTrigger) {
         d.cr("untilTest", "step0");
-        TS_ThreadAsyncAwait.runUntil(killTrigger, Duration.ofSeconds(3), kt -> {
+        TS_ThreadAsyncAwait.runUntil(killTrigger.newChild("untilTest"), Duration.ofSeconds(3), kt -> {
             while (true) {
                 TS_ThreadSyncWait.seconds("runUntil", killTrigger, 1);
                 d.cr("untilTest", "runUntil", System.currentTimeMillis());
             }
         });
         d.cr("untilTest", "step1");
-        TS_ThreadAsyncAwait.callSingle(killTrigger, Duration.ofSeconds(3), kt -> {
+        TS_ThreadAsyncAwait.callSingle(killTrigger.newChild("untilTest"), Duration.ofSeconds(3), kt -> {
             while (true) {
                 TS_ThreadSyncWait.seconds("callSingle", killTrigger, 1);
                 d.cr("untilTest", "callSingle", System.currentTimeMillis());
@@ -339,8 +340,8 @@ public class Main {
         TS_ThreadSyncWait.seconds(d.className, killTrigger, 10);
     }
 
-    private static void scopeTestPure(TS_ThreadSyncTrigger killTrigger) {
-        Consumer<String> log = msg -> System.out.println("log -> " + msg);
+    private static void scopeTest_ShutdownOnFailure_waitWithException(TS_ThreadSyncTrigger killTrigger) {
+        Consumer<String> log = msg -> System.out.println("scopeTest_ShutdownOnFailure_waitWithException -> " + msg);
         Consumer<Duration> wait = duration -> {
             try {
                 Thread.sleep(duration);
@@ -349,9 +350,9 @@ public class Main {
             }
         };
         Callable<String> callableBlocking = () -> {
-            log.accept("fetchFail.callableBlocking.begin");
+            log.accept("callableBlocking.begin");
             while (true) {
-                log.accept("fetchFail.callableBlocking.while");
+                log.accept("callableBlocking.while");
                 wait.accept(Duration.ofSeconds(1));
             }
 //  log.accept("fetchFail.callableBlocking.neverEnds");
@@ -378,14 +379,14 @@ public class Main {
     private static void scopeTest(TS_ThreadSyncTrigger killTrigger) {
 
         List<TGS_FuncMTUCE_OutTyped_In1<String, TS_ThreadSyncTrigger>> callables = List.of(kt -> {
-                    d.cr("fetcing...", "1");
-                    IntStream.range(0, 15).forEachOrdered(i -> {
-                        d.cr("fetcing...", "1", "tick");
-                        TS_ThreadSyncWait.seconds(d.className, killTrigger, 1);
-                    });
-                    d.cr("completed", "1");
-                    return "1";
-                },
+            d.cr("fetcing...", "1");
+            IntStream.range(0, 15).forEachOrdered(i -> {
+                d.cr("fetcing...", "1", "tick");
+                TS_ThreadSyncWait.seconds(d.className, killTrigger, 1);
+            });
+            d.cr("completed", "1");
+            return "1";
+        },
                 kt -> {
                     d.cr("fetcing...", "2");
                     IntStream.range(0, 2).forEachOrdered(i -> {
@@ -408,7 +409,7 @@ public class Main {
 
         if (true) {
             d.cr("------- parallel.FOREVER -------");
-            var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger, null, callables);
+            var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger.newChild("scopeTest"), null, callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
@@ -416,7 +417,7 @@ public class Main {
 
         if (true) {
             d.cr("------- parallel.TIMED -------");
-            var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger, Duration.ofSeconds(1), callables);
+            var fetchAll = TS_ThreadAsyncAwait.callParallel(killTrigger.newChild("scopeTest"), Duration.ofSeconds(1), callables);
             fetchAll.resultsForSuccessfulOnes.forEach(result -> d.cr("fetchAll.resultsForSuccessfulOnes", result));
             d.cr("fetchAll.timeout()", fetchAll.timeout());
             fetchAll.exceptions.forEach(e -> d.cr("fetchAll.e", e.getMessage()));
@@ -424,7 +425,7 @@ public class Main {
 
         if (true) {
             d.cr("------- parallelUntilFirstSuccess.FOREVER -------");
-            var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger, null, callables);
+            var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger.newChild("scopeTest"), null, callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
@@ -433,7 +434,7 @@ public class Main {
 
         if (true) {
             d.cr("------- parallelUntilFirstSuccess.TIMED -------");
-            var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger, Duration.ofSeconds(1), callables);
+            var fetchFirst = TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger.newChild("scopeTest"), Duration.ofSeconds(1), callables);
             d.cr("fetchFirst.resultIfAnySuccessful()", fetchFirst.resultIfAnySuccessful);
             d.cr("fetchFirst.timeout()", fetchFirst.timeout());
             fetchFirst.exceptions.forEach(e -> d.cr("fetchFirst.e", e.getMessage()));
@@ -442,7 +443,7 @@ public class Main {
 
         if (true) {
             d.cr("------- parallelUntilFirstFail.FOREVER -------");
-            var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger, null, callables);
+            var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger.newChild("scopeTest"), null, callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
@@ -451,7 +452,7 @@ public class Main {
 
         if (true) {//HATA
             d.cr("------- parallelUntilFirstFail.TIMED -------");
-            var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger, Duration.ofSeconds(1), callables);
+            var fetchFail = TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger.newChild("scopeTest"), Duration.ofSeconds(1), callables);
             d.cr("fetchFail.resultsForSuccessfulOnes()", fetchFail.resultsForSuccessfulOnes);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptions.forEach(e -> d.cr("fetchFail.e", e.getMessage()));
@@ -459,15 +460,16 @@ public class Main {
         }
         if (true) {
             d.cr("------- callSingle.TIMED -------");
-            var fetchFail = TS_ThreadAsyncAwait.callSingle(killTrigger, Duration.ofSeconds(5), callables.get(0));
+            var fetchFail = TS_ThreadAsyncAwait.callSingle(killTrigger.newChild("scopeTest"), Duration.ofSeconds(5), callables.get(0));
             d.cr("fetchFail.resultIfSuccessful", fetchFail.resultIfSuccessful);
             d.cr("fetchFail.timeout()", fetchFail.timeout());
             fetchFail.exceptionIfFailed.stream().forEach(e -> d.cr("fetchFail.e", e.getMessage()));
         }
         if (true) {
             d.cr("------- everySeconds.killTriggered -------");
-            TS_ThreadAsyncScheduled.everySeconds(killTrigger, Duration.ofHours(1), true, 5, kt -> d.ce("everySeconds", "tick"));
+            TS_ThreadAsyncScheduled.everySeconds(killTrigger.newChild("scopeTest"), Duration.ofHours(1), true, 5, kt -> d.ce("everySeconds", "tick"));
             TS_ThreadSyncWait.seconds("everySeconds", killTrigger, 5);
+            d.cr("scopeTest", "killTrigger.trigger();");
             killTrigger.trigger();
         }
     }
