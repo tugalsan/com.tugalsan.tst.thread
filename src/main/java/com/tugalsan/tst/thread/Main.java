@@ -470,7 +470,7 @@ public class Main {
             TS_ThreadAsyncScheduled.everySeconds(killTrigger.newChild("scopeTest"), Duration.ofHours(1), true, 5, kt -> d.ce("everySeconds", "tick"));
             TS_ThreadSyncWait.seconds("everySeconds", killTrigger, 5);
             d.cr("scopeTest", "killTrigger.trigger();");
-            killTrigger.trigger();
+            killTrigger.trigger("testme");
         }
     }
 }
