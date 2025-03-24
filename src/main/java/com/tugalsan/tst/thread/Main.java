@@ -1,7 +1,7 @@
 package com.tugalsan.tst.thread;
 
-import com.tugalsan.api.function.client.maythrow.uncheckedexceptions.TGS_FuncMTUCEUtils;
-import com.tugalsan.api.function.client.maythrow.uncheckedexceptions.TGS_FuncMTUCE_OutTyped_In1;
+import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTUUtils;
+import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTU_OutTyped_In1;
 import com.tugalsan.api.thread.server.async.await.TS_ThreadAsyncAwait;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.random.client.*;
@@ -164,7 +164,7 @@ public class Main {
                 scope.shutdown();
                 return new Union(true, e, null);
             }
-            return TGS_FuncMTUCEUtils.thrw(e);
+            return TGS_FuncMTUUtils.thrw(e);
         } finally {
             scope.close();
         }
@@ -193,7 +193,7 @@ public class Main {
                 scope.shutdown();
                 return new Union(true, e, null);
             }
-            return TGS_FuncMTUCEUtils.thrw(e);
+            return TGS_FuncMTUUtils.thrw(e);
         } finally {
             scope.close();
         }
@@ -222,7 +222,7 @@ public class Main {
             if (e instanceof TimeoutException) {
                 scope.shutdown();
             }
-            TGS_FuncMTUCEUtils.thrw(e);
+            TGS_FuncMTUUtils.thrw(e);
         } finally {
             scope.close();
         }
@@ -346,7 +346,7 @@ public class Main {
             try {
                 Thread.sleep(duration);
             } catch (InterruptedException e) {
-                TGS_FuncMTUCEUtils.thrw(e);
+                TGS_FuncMTUUtils.thrw(e);
             }
         };
         Callable<String> callableBlocking = () -> {
@@ -378,7 +378,7 @@ public class Main {
 
     private static void scopeTest(TS_ThreadSyncTrigger killTrigger) {
 
-        List<TGS_FuncMTUCE_OutTyped_In1<String, TS_ThreadSyncTrigger>> callables = List.of(kt -> {
+        List<TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger>> callables = List.of(kt -> {
             d.cr("fetcing...", "1");
             IntStream.range(0, 15).forEachOrdered(i -> {
                 d.cr("fetcing...", "1", "tick");
