@@ -16,8 +16,12 @@ public class Main {
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) throws InterruptedException {
 //        TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of("main");
+        Callable<String> tenSecsTask = () -> {
+            Thread.sleep(Duration.ofSeconds(10));
+            return "a";
+        };
 
-//        allSuccessfulOrThrow("ali", Duration.ofSeconds(2));
+        allAwait("allAwait", Duration.ofSeconds(2), tenSecsTask);
         IO.println("main.done..");
     }
 
