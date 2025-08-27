@@ -14,7 +14,7 @@ public class Main {
 //    private static final TS_Log d = TS_Log.of(true, Main.class);
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
-    public static void main(String... s) {
+    public static void main(String... s) throws InterruptedException {
 //        TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of("main");
 
 //        allSuccessfulOrThrow("ali", Duration.ofSeconds(2));
@@ -25,7 +25,7 @@ public class Main {
 
     }
 
-    public static <R> AnySuccessfulOrThrow<R> anySuccessfulOrThrow(String name, Duration timeout, Callable<R>... callables) throws InterruptedException {
+    public static <R> AnySuccessfulOrThrow<R> anySuccessfulOrThrow(String name, Duration timeout, Callable<R>... callables) {
         try (var scope = StructuredTaskScope.open(Joiner.<R>anySuccessfulResultOrThrow(),
                 cf -> {
                     if (name != null) {
@@ -40,10 +40,7 @@ public class Main {
             Arrays.stream(callables).forEach(scope::fork);
             return new AnySuccessfulOrThrow(name, timeout, Optional.of(scope.join()), Optional.empty());
         } catch (InterruptedException | StructuredTaskScope.FailedException e) {
-            if (e instanceof InterruptedException eie) {
-                Thread.currentThread().interrupt();
-                throw eie;
-            }
+            throwIfInterruptedException(e);
             return new AnySuccessfulOrThrow(name, timeout, Optional.empty(), Optional.of((StructuredTaskScope.FailedException) e));
         }
     }
@@ -52,7 +49,7 @@ public class Main {
 
     }
 
-    public static <R> AllSuccessfulOrThrow<List<R>> allSuccessfulOrThrow(String name, Duration timeout, Callable<R>... callables) throws InterruptedException {
+    public static <R> AllSuccessfulOrThrow<List<R>> allSuccessfulOrThrow(String name, Duration timeout, Callable<R>... callables) {
         try (var scope = StructuredTaskScope.open(Joiner.<R>allSuccessfulOrThrow(),
                 cf -> {
                     if (name != null) {
@@ -67,10 +64,7 @@ public class Main {
             Arrays.stream(callables).forEach(scope::fork);
             return new AllSuccessfulOrThrow(name, timeout, Optional.of(scope.join().map(c -> c.get()).toList()), Optional.empty());
         } catch (InterruptedException | StructuredTaskScope.FailedException e) {
-            if (e instanceof InterruptedException eie) {
-                Thread.currentThread().interrupt();
-                throw eie;
-            }
+            throwIfInterruptedException(e);
             return new AllSuccessfulOrThrow(name, timeout, Optional.empty(), Optional.of((StructuredTaskScope.FailedException) e));
         }
     }
@@ -79,7 +73,7 @@ public class Main {
 
     }
 
-    public static <R> AllAwait<R> allAwait(String name, Duration timeout, Callable<R>... callables) throws InterruptedException {
+    public static <R> AllAwait<R> allAwait(String name, Duration timeout, Callable<R>... callables) {
         try (var scope = StructuredTaskScope.open(Joiner.<R>awaitAll(),
                 cf -> {
                     if (name != null) {
@@ -97,10 +91,8 @@ public class Main {
             var resultsFailedOrUnavailable = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
             return new AllAwait(name, timeout, resultsSuccessful, resultsFailedOrUnavailable);
         } catch (InterruptedException e) {
-//            if (e instanceof InterruptedException eie) {
-            Thread.currentThread().interrupt();
-            throw e;
-//            }
+            throwIfInterruptedException(e);
+            return null;
         }
     }
 
@@ -108,7 +100,7 @@ public class Main {
 
     }
 
-    public static AllAwaitNoType allAwaitNoType(String name, Duration timeout, Callable... callables) throws InterruptedException {
+    public static AllAwaitNoType allAwaitNoType(String name, Duration timeout, Callable... callables) {
         try (var scope = StructuredTaskScope.open(Joiner.awaitAll(),
                 cf -> {
                     if (name != null) {
@@ -126,11 +118,38 @@ public class Main {
             var resultsFailed = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
             return new AllAwaitNoType(name, timeout, resultsSuccessful, resultsFailed);
         } catch (InterruptedException e) {
-//            if (e instanceof InterruptedException eie) {
-            Thread.currentThread().interrupt();
-            throw e;
-//            }
+            throwIfInterruptedException(e);
+            return null;
         }
+    }
+
+    //-------------------- INTERRUPTED EXCEPTION ----------------
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void _throwAsUncheckedException(Throwable exception) throws T {
+        throw (T) exception;
+    }
+
+    @Deprecated //only internalUse
+    private static void throwAsUncheckedException(Throwable exception) {
+        Main.<RuntimeException>_throwAsUncheckedException(exception);
+    }
+
+    public static <R> R throwIfInterruptedException(Throwable t) {
+        if (isInterruptedException(t)) {
+            Thread.currentThread().interrupt();
+            throwAsUncheckedException(t);
+        }
+        return null;
+    }
+
+    public static boolean isInterruptedException(Throwable t) {
+        if (t instanceof InterruptedException) {
+            return true;
+        }
+        if (t.getCause() != null) {
+            return isInterruptedException(t.getCause());
+        }
+        return false;
     }
 
 }
