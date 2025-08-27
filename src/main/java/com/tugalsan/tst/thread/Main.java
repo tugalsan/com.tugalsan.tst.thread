@@ -14,14 +14,15 @@ public class Main {
 //    private static final TS_Log d = TS_Log.of(true, Main.class);
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
-    public static void main(String... s) throws InterruptedException {
+    public static void main(String... s) {
 //        TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of("main");
+
         Callable<String> tenSecsTask = () -> {
             Thread.sleep(Duration.ofSeconds(10));
             return "a";
         };
-
-        allAwait("allAwait", Duration.ofSeconds(2), tenSecsTask);
+        var allAwait = allAwait("allAwait", Duration.ofSeconds(2), tenSecsTask);
+        allAwait.resultsSuccessful().forEach(IO::println);
         IO.println("main.done..");
     }
 
@@ -73,7 +74,7 @@ public class Main {
         }
     }
 
-    public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<R> resultsFailedOrUnavailable) {
+    public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable) {
 
     }
 
@@ -100,7 +101,7 @@ public class Main {
         }
     }
 
-    public static record AllAwaitNoType(String name, Duration timeout, List resultsSuccessful, List resultsFailed) {
+    public static record AllAwaitNoType(String name, Duration timeout, List resultsSuccessful, List<StructuredTaskScope.Subtask> resultsFailed) {
 
     }
 
