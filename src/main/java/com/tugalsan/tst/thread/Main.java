@@ -24,10 +24,11 @@ public class Main {
         //allAwait_tst(fiveSecsTask);
         //allAwait_tst_timeout(fiveSecsTask);
         //allAwaitNoType_tst_timeout(fiveSecsTask);
-        allAwait_tst_timeout(fiveSecsTask);
+        //allAwait_tst_timeout(fiveSecsTask);
         IO.println("main.done..");
     }
 
+    //--------------------------- TESTS ----------------------------
     private static void allAwait_tst(Callable<String> fiveSecsTask) {
         var allAwait = allAwait("allAwait", Duration.ofSeconds(10), fiveSecsTask);
         allAwait.resultsSuccessful().forEach(IO::println);
@@ -48,6 +49,7 @@ public class Main {
         allAwaitNoType.resultsSuccessful().forEach(IO::println);
     }
 
+    //--------------------------- AllAwait ----------------------------
     public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
 
     }
@@ -81,6 +83,7 @@ public class Main {
         }
     }
 
+    //--------------------------- AllAwaitNoType ----------------------------
     public static record AllAwaitNoType(String name, Duration timeout, List resultsSuccessful, List<StructuredTaskScope.Subtask> resultsFailed, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
 
     }
@@ -114,35 +117,7 @@ public class Main {
         }
     }
 
-    //-------------------- INTERRUPTED EXCEPTION ----------------
-    @SuppressWarnings("unchecked")
-    private static <T extends Throwable> void _throwAsUncheckedException(Throwable exception) throws T {
-        throw (T) exception;
-    }
-
-    @Deprecated //only internalUse
-    private static void throwAsUncheckedException(Throwable exception) {
-        Main.<RuntimeException>_throwAsUncheckedException(exception);
-    }
-
-    public static <R> R throwIfInterruptedException(Throwable t) {
-        if (isInterruptedException(t)) {
-            Thread.currentThread().interrupt();
-            throwAsUncheckedException(t);
-        }
-        return null;
-    }
-
-    public static boolean isInterruptedException(Throwable t) {
-        if (t instanceof InterruptedException) {
-            return true;
-        }
-        if (t.getCause() != null) {
-            return isInterruptedException(t.getCause());
-        }
-        return false;
-    }
-
+    //--------------------------- AnySuccessfulOrThrow ----------------------------
     public static record AnySuccessfulOrThrow<R>(String name, Duration timeout, Optional<R> result, Optional<StructuredTaskScope.FailedException> failedException) {
 
     }
@@ -170,6 +145,7 @@ public class Main {
         }
     }
 
+    //--------------------------- AllSuccessfulOrThrow ----------------------------
     public static record AllSuccessfulOrThrow<R>(String name, Duration timeout, Optional<List<R>> results, Optional<StructuredTaskScope.FailedException> failedException) {
 
     }
@@ -195,5 +171,34 @@ public class Main {
             throwIfInterruptedException(e);
             return new AllSuccessfulOrThrow(name, timeout, Optional.empty(), Optional.of((StructuredTaskScope.FailedException) e));
         }
+    }
+
+    //-------------------- throwIfInterruptedException ----------------
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void _throwAsUncheckedException(Throwable exception) throws T {
+        throw (T) exception;
+    }
+
+    @Deprecated //only internalUse
+    private static void throwAsUncheckedException(Throwable exception) {
+        Main.<RuntimeException>_throwAsUncheckedException(exception);
+    }
+
+    public static <R> R throwIfInterruptedException(Throwable t) {
+        if (isInterruptedException(t)) {
+            Thread.currentThread().interrupt();
+            throwAsUncheckedException(t);
+        }
+        return null;
+    }
+
+    public static boolean isInterruptedException(Throwable t) {
+        if (t instanceof InterruptedException) {
+            return true;
+        }
+        if (t.getCause() != null) {
+            return isInterruptedException(t.getCause());
+        }
+        return false;
     }
 }
