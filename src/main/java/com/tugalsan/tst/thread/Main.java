@@ -25,12 +25,12 @@ public class Main {
             throw new RuntimeException("job error");
         };
         IO.println("main.begin..");
-//        allAwait_tst_success(fiveSecsTask);//OK
-        allAwait_tst_throw(throwingTask);//TODO
-//        allAwait_tst_timeout(fiveSecsTask);//TODO
-//        allAwaitNoType_tst_success(fiveSecsTask);//TODO
-//        allAwaitNoType_tst_throw(throwingTask);//TODO
-//        allAwaitNoType_tst_timeout(fiveSecsTask);//TODO
+        allAwait_tst_success(fiveSecsTask);//OK
+        allAwait_tst_throw(throwingTask);//OK
+        allAwait_tst_timeout(fiveSecsTask);//OK
+        allAwaitNoType_tst_success(fiveSecsTask);//OK
+        allAwaitNoType_tst_throw(throwingTask);//OK
+        allAwaitNoType_tst_timeout(fiveSecsTask);//OK
 //        anySuccessfulOrThrow_tst_success(fiveSecsTask);//TODO
 //        anySuccessfulOrThrow_tst_throw(throwingTask);//TODO
 //        anySuccessfulOrThrow_tst_timeout(fiveSecsTask);//TODO
@@ -42,63 +42,63 @@ public class Main {
 
     //--------------------------- TESTS ----------------------------
     private static void allAwait_tst_success(Callable<String> fiveSecsTask) {
-        var allAwait = allAwait("allAwait_tst_success", Duration.ofSeconds(10), fiveSecsTask);
-        allAwait.resultsSuccessful().forEach(IO::println);
+        var await = allAwait("allAwait_tst_success", Duration.ofSeconds(10), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void allAwait_tst_throw(Callable<String> fiveSecsTask) {
-        var allAwait = allAwait("allAwait_tst_success", Duration.ofSeconds(10), fiveSecsTask);
-        allAwait.resultsSuccessful().forEach(IO::println);
+        var await = allAwait("allAwait_tst_throw", Duration.ofSeconds(10), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void allAwait_tst_timeout(Callable<String> fiveSecsTask) {
-        var allAwait = allAwait("allAwait_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
-        allAwait.resultsSuccessful().forEach(IO::println);
+        var await = allAwait("allAwait_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void allAwaitNoType_tst_success(Callable<String> fiveSecsTask) {
-        var allAwaitNoType = allAwaitNoType("allAwaitNoType_tst_success", Duration.ofSeconds(10), fiveSecsTask);
-        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+        var await = allAwaitNoType("allAwaitNoType_tst_success", Duration.ofSeconds(10), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void allAwaitNoType_tst_throw(Callable<String> fiveSecsTask) {
-        var allAwaitNoType = allAwaitNoType("allAwaitNoType_tst_throw", Duration.ofSeconds(10), fiveSecsTask);
-        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+        var await = allAwaitNoType("allAwaitNoType_tst_throw", Duration.ofSeconds(10), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void allAwaitNoType_tst_timeout(Callable<String> fiveSecsTask) {
-        var allAwaitNoType = allAwaitNoType("allAwaitNoType_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
-        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+        var await = allAwaitNoType("allAwaitNoType_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void anySuccessfulOrThrow_tst_success(Callable<String> fiveSecsTask) {
-        var allAwaitNoType = allAwaitNoType("anySuccessfulOrThrow_tst_success", Duration.ofSeconds(2), fiveSecsTask);
-        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+        var await = allAwaitNoType("anySuccessfulOrThrow_tst_success", Duration.ofSeconds(2), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void anySuccessfulOrThrow_tst_throw(Callable<String> fiveSecsTask) {
-        var allAwaitNoType = allAwaitNoType("anySuccessfulOrThrow_tst_throw", Duration.ofSeconds(2), fiveSecsTask);
-        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+        var await = allAwaitNoType("anySuccessfulOrThrow_tst_throw", Duration.ofSeconds(2), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void anySuccessfulOrThrow_tst_timeout(Callable<String> fiveSecsTask) {
-        var allAwaitNoType = allAwaitNoType("anySuccessfulOrThrow_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
-        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+        var await = allAwaitNoType("anySuccessfulOrThrow_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void allSuccessfulOrThrow_tst_success(Callable<String> fiveSecsTask) {
-        var allAwaitNoType = allAwaitNoType("allSuccessfulOrThrow_tst_success", Duration.ofSeconds(2), fiveSecsTask);
-        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+        var await = allAwaitNoType("allSuccessfulOrThrow_tst_success", Duration.ofSeconds(2), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void allSuccessfulOrThrow_tst_throw(Callable<String> fiveSecsTask) {
-        var allAwaitNoType = allAwaitNoType("allSuccessfulOrThrow_tst_throw", Duration.ofSeconds(2), fiveSecsTask);
-        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+        var await = allAwaitNoType("allSuccessfulOrThrow_tst_throw", Duration.ofSeconds(2), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     private static void allSuccessfulOrThrow_tst_timeout(Callable<String> fiveSecsTask) {
-        var allAwaitNoType = allAwaitNoType("allSuccessfulOrThrow_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
-        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+        var await = allAwaitNoType("allSuccessfulOrThrow_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
+        IO.println(await.toString());
     }
 
     //--------------------------- AllAwait ----------------------------
