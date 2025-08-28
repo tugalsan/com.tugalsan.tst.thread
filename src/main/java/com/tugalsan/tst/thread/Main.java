@@ -22,6 +22,8 @@ public class Main {
         };
         IO.println("main.begin..");
         //allAwait_tst(fiveSecsTask);
+        //allAwait_tst_timeout(fiveSecsTask);
+        //allAwaitNoType_tst_timeout(fiveSecsTask);
         allAwait_tst_timeout(fiveSecsTask);
         IO.println("main.done..");
     }
@@ -34,6 +36,16 @@ public class Main {
     private static void allAwait_tst_timeout(Callable<String> fiveSecsTask) {
         var allAwait = allAwait("allAwait", Duration.ofSeconds(2), fiveSecsTask);
         allAwait.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void allAwaitNoType_tst(Callable<String> fiveSecsTask) {
+        var allAwaitNoType = allAwaitNoType("allAwaitNoType", Duration.ofSeconds(10), fiveSecsTask);
+        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void allAwaitNoType_tst_timeout(Callable<String> fiveSecsTask) {
+        var allAwaitNoType = allAwaitNoType("allAwait", Duration.ofSeconds(2), fiveSecsTask);
+        allAwaitNoType.resultsSuccessful().forEach(IO::println);
     }
 
     public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
