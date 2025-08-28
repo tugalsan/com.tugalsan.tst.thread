@@ -16,21 +16,33 @@ public class Main {
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
 //        TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of("main");
-        Callable<String> fiveSecsTask = () -> {
-            Thread.sleep(Duration.ofSeconds(5));
-            return "job finished";
+        Callable<String> threeSecsStringThrowingTask = () -> {
+            Thread.sleep(Duration.ofSeconds(3));
+            throw new RuntimeException("task 3 secs string throwing");
         };
-        Callable<String> throwingTask = () -> {
+        Callable<Long> fourSecsLongTask = () -> {
+            Thread.sleep(Duration.ofSeconds(4));
+            return 4L;
+        };
+        Callable<String> fiveSecsStringTask = () -> {
             Thread.sleep(Duration.ofSeconds(5));
-            throw new RuntimeException("job error");
+            return "task 5 secs string finished";
+        };
+        Callable<String> sixSecsStringTask = () -> {
+            Thread.sleep(Duration.ofSeconds(6));
+            return "task 6 secs string finished";
         };
         IO.println("main.begin..");
-        allAwait_tst_success(fiveSecsTask);//OK
-        allAwait_tst_throw(throwingTask);//OK
-        allAwait_tst_timeout(fiveSecsTask);//OK
-        allAwaitNoType_tst_success(fiveSecsTask);//OK
-        allAwaitNoType_tst_throw(throwingTask);//OK
-        allAwaitNoType_tst_timeout(fiveSecsTask);//OK
+
+        IO.println(allAwait("allAwait_success", Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
+        IO.println(allAwait("allAwait_timeout1", Duration.ofSeconds(2), fiveSecsStringTask, sixSecsStringTask));
+        IO.println(allAwait("allAwait_throw", Duration.ofSeconds(10), threeSecsStringThrowingTask, fiveSecsStringTask));
+        IO.println(allAwait("allAwait_timeout2", Duration.ofSeconds(2), threeSecsStringThrowingTask, fiveSecsStringTask));
+        IO.println(allAwaitNoType("allAwaitNoType_success", Duration.ofSeconds(10), fourSecsLongTask, sixSecsStringTask));
+        IO.println(allAwaitNoType("allAwaitNoType_timeout1", Duration.ofSeconds(2), fourSecsLongTask, sixSecsStringTask));
+        IO.println(allAwaitNoType("allAwaitNoType_throw", Duration.ofSeconds(10), threeSecsStringThrowingTask, fourSecsLongTask));
+        IO.println(allAwaitNoType("allAwaitNoType_timeout2", Duration.ofSeconds(2), threeSecsStringThrowingTask, fourSecsLongTask));
+
 //        anySuccessfulOrThrow_tst_success(fiveSecsTask);//TODO
 //        anySuccessfulOrThrow_tst_throw(throwingTask);//TODO
 //        anySuccessfulOrThrow_tst_timeout(fiveSecsTask);//TODO
@@ -38,67 +50,6 @@ public class Main {
 //        allSuccessfulOrThrow_tst_throw(throwingTask);//TODO
 //        allSuccessfulOrThrow_tst_timeout(fiveSecsTask);//TODO
         IO.println("main.done..");
-    }
-
-    //--------------------------- TESTS ----------------------------
-    private static void allAwait_tst_success(Callable<String> fiveSecsTask) {
-        var await = allAwait("allAwait_tst_success", Duration.ofSeconds(10), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void allAwait_tst_throw(Callable<String> fiveSecsTask) {
-        var await = allAwait("allAwait_tst_throw", Duration.ofSeconds(10), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void allAwait_tst_timeout(Callable<String> fiveSecsTask) {
-        var await = allAwait("allAwait_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void allAwaitNoType_tst_success(Callable<String> fiveSecsTask) {
-        var await = allAwaitNoType("allAwaitNoType_tst_success", Duration.ofSeconds(10), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void allAwaitNoType_tst_throw(Callable<String> fiveSecsTask) {
-        var await = allAwaitNoType("allAwaitNoType_tst_throw", Duration.ofSeconds(10), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void allAwaitNoType_tst_timeout(Callable<String> fiveSecsTask) {
-        var await = allAwaitNoType("allAwaitNoType_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void anySuccessfulOrThrow_tst_success(Callable<String> fiveSecsTask) {
-        var await = allAwaitNoType("anySuccessfulOrThrow_tst_success", Duration.ofSeconds(2), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void anySuccessfulOrThrow_tst_throw(Callable<String> fiveSecsTask) {
-        var await = allAwaitNoType("anySuccessfulOrThrow_tst_throw", Duration.ofSeconds(2), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void anySuccessfulOrThrow_tst_timeout(Callable<String> fiveSecsTask) {
-        var await = allAwaitNoType("anySuccessfulOrThrow_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void allSuccessfulOrThrow_tst_success(Callable<String> fiveSecsTask) {
-        var await = allAwaitNoType("allSuccessfulOrThrow_tst_success", Duration.ofSeconds(2), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void allSuccessfulOrThrow_tst_throw(Callable<String> fiveSecsTask) {
-        var await = allAwaitNoType("allSuccessfulOrThrow_tst_throw", Duration.ofSeconds(2), fiveSecsTask);
-        IO.println(await.toString());
-    }
-
-    private static void allSuccessfulOrThrow_tst_timeout(Callable<String> fiveSecsTask) {
-        var await = allAwaitNoType("allSuccessfulOrThrow_tst_timeout", Duration.ofSeconds(2), fiveSecsTask);
-        IO.println(await.toString());
     }
 
     //--------------------------- AllAwait ----------------------------
