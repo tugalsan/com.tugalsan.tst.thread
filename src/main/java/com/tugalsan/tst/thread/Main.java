@@ -16,14 +16,24 @@ public class Main {
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
 //        TS_ThreadSyncTrigger killTrigger = TS_ThreadSyncTrigger.of("main");
-
-        Callable<String> tenSecsTask = () -> {
-            Thread.sleep(Duration.ofSeconds(10));
-            return "a";
+        Callable<String> fiveSecsTask = () -> {
+            Thread.sleep(Duration.ofSeconds(5));
+            return "job finished";
         };
-        var allAwait = allAwait("allAwait", Duration.ofSeconds(2), tenSecsTask);
-        allAwait.resultsSuccessful().forEach(IO::println);
+        IO.println("main.begin..");
+        //allAwait_tst(fiveSecsTask);
+        allAwait_tst_timeout(fiveSecsTask);
         IO.println("main.done..");
+    }
+
+    private static void allAwait_tst(Callable<String> fiveSecsTask) {
+        var allAwait = allAwait("allAwait", Duration.ofSeconds(10), fiveSecsTask);
+        allAwait.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void allAwait_tst_timeout(Callable<String> fiveSecsTask) {
+        var allAwait = allAwait("allAwait", Duration.ofSeconds(2), fiveSecsTask);
+        allAwait.resultsSuccessful().forEach(IO::println);
     }
 
     public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
