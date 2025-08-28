@@ -42,18 +42,19 @@ public class Main {
         IO.println(allAwaitNoType("allAwaitNoType_timeout1", Duration.ofSeconds(2), fourSecsLongTask, sixSecsStringTask));
         IO.println(allAwaitNoType("allAwaitNoType_throw", Duration.ofSeconds(10), threeSecsStringThrowingTask, fourSecsLongTask));
         IO.println(allAwaitNoType("allAwaitNoType_timeout2", Duration.ofSeconds(2), threeSecsStringThrowingTask, fourSecsLongTask));
-
-//        anySuccessfulOrThrow_tst_success(fiveSecsTask);//TODO
-//        anySuccessfulOrThrow_tst_throw(throwingTask);//TODO
-//        anySuccessfulOrThrow_tst_timeout(fiveSecsTask);//TODO
-//        allSuccessfulOrThrow_tst_success(fiveSecsTask);//TODO
-//        allSuccessfulOrThrow_tst_throw(throwingTask);//TODO
-//        allSuccessfulOrThrow_tst_timeout(fiveSecsTask);//TODO
+        IO.println(anySuccessfulOrThrow("anySuccessfulOrThrow_success", Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
+        IO.println(anySuccessfulOrThrow("anySuccessfulOrThrow_timeout1", Duration.ofSeconds(2), fiveSecsStringTask, sixSecsStringTask));
+        IO.println(anySuccessfulOrThrow("anySuccessfulOrThrow_throw", Duration.ofSeconds(10), threeSecsStringThrowingTask, fiveSecsStringTask));
+        IO.println(anySuccessfulOrThrow("anySuccessfulOrThrow_timeout2", Duration.ofSeconds(2), threeSecsStringThrowingTask, fiveSecsStringTask));
+        IO.println(allSuccessfulOrThrow("allSuccessfulOrThrow_success", Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
+        IO.println(allSuccessfulOrThrow("allSuccessfulOrThrow_timeout1", Duration.ofSeconds(2), fiveSecsStringTask, sixSecsStringTask));
+        IO.println(allSuccessfulOrThrow("allSuccessfulOrThrow_throw", Duration.ofSeconds(10), threeSecsStringThrowingTask, fiveSecsStringTask));
+        IO.println(allSuccessfulOrThrow("allSuccessfulOrThrow_timeout2", Duration.ofSeconds(2), threeSecsStringThrowingTask, fiveSecsStringTask));
         IO.println("main.done..");
     }
 
     //--------------------------- AllAwait ----------------------------
-    public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
+    public static record AllAwait<R>(String name, Duration timeout, Optional<StructuredTaskScope.TimeoutException> timeoutException, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable) {
 
     }
 
@@ -76,18 +77,17 @@ public class Main {
             scope.join();
             var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).map(StructuredTaskScope.Subtask::get).toList();
             var resultsFailedOrUnavailable = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
-            return new AllAwait(name, timeout, resultsSuccessful, resultsFailedOrUnavailable, Optional.empty());
+            return new AllAwait(name, timeout, Optional.empty(), resultsSuccessful, resultsFailedOrUnavailable);
         } catch (InterruptedException | StructuredTaskScope.TimeoutException e) {
-            throwIfInterruptedException(e);
             if (e instanceof StructuredTaskScope.TimeoutException et) {
-                return new AllAwait(name, timeout, List.of(), List.of(), Optional.of(et));
+                return new AllAwait(name, timeout, Optional.of(et), List.of(), List.of());
             }
-            return null;
+            return throwIfInterruptedException(e);
         }
     }
 
     //--------------------------- AllAwaitNoType ----------------------------
-    public static record AllAwaitNoType(String name, Duration timeout, List resultsSuccessful, List<StructuredTaskScope.Subtask> resultsFailed, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
+    public static record AllAwaitNoType(String name, Duration timeout, Optional<StructuredTaskScope.TimeoutException> timeoutException, List<StructuredTaskScope.Subtask> resultsFailed, List resultsSuccessful) {
 
     }
 
@@ -110,18 +110,17 @@ public class Main {
             scope.join();
             var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).map(StructuredTaskScope.Subtask::get).toList();
             var resultsFailed = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
-            return new AllAwaitNoType(name, timeout, resultsSuccessful, resultsFailed, Optional.empty());
+            return new AllAwaitNoType(name, timeout, Optional.empty(), resultsFailed, resultsSuccessful);
         } catch (InterruptedException | StructuredTaskScope.TimeoutException e) {
-            throwIfInterruptedException(e);
             if (e instanceof StructuredTaskScope.TimeoutException et) {
-                return new AllAwaitNoType(name, timeout, List.of(), List.of(), Optional.of(et));
+                return new AllAwaitNoType(name, timeout, Optional.of(et), List.of(), List.of());
             }
-            return null;
+            return throwIfInterruptedException(e);
         }
     }
 
     //--------------------------- AnySuccessfulOrThrow ----------------------------
-    public static record AnySuccessfulOrThrow<R>(String name, Duration timeout, Optional<R> result, Optional<StructuredTaskScope.FailedException> failedException) {
+    public static record AnySuccessfulOrThrow<R>(String name, Duration timeout, Optional<StructuredTaskScope.TimeoutException> timeoutException, Optional<StructuredTaskScope.FailedException> failedException, Optional<R> result) {
 
     }
 
@@ -141,15 +140,20 @@ public class Main {
                 }
         )) {
             Arrays.stream(callables).forEach(scope::fork);
-            return new AnySuccessfulOrThrow(name, timeout, Optional.of(scope.join()), Optional.empty());
-        } catch (InterruptedException | StructuredTaskScope.FailedException e) {
-            throwIfInterruptedException(e);
-            return new AnySuccessfulOrThrow(name, timeout, Optional.empty(), Optional.of((StructuredTaskScope.FailedException) e));
+            return new AnySuccessfulOrThrow(name, timeout, Optional.empty(), Optional.empty(), Optional.of(scope.join()));
+        } catch (InterruptedException | StructuredTaskScope.TimeoutException | StructuredTaskScope.FailedException e) {
+            if (e instanceof StructuredTaskScope.TimeoutException et) {
+                return new AnySuccessfulOrThrow(name, timeout, Optional.of(et), Optional.empty(), Optional.empty());
+            }
+            if (e instanceof StructuredTaskScope.FailedException ef) {
+                return new AnySuccessfulOrThrow(name, timeout, Optional.empty(), Optional.of(ef), Optional.empty());
+            }
+            return throwIfInterruptedException(e);
         }
     }
 
     //--------------------------- AllSuccessfulOrThrow ----------------------------
-    public static record AllSuccessfulOrThrow<R>(String name, Duration timeout, Optional<List<R>> results, Optional<StructuredTaskScope.FailedException> failedException) {
+    public static record AllSuccessfulOrThrow<R>(String name, Duration timeout, Optional<StructuredTaskScope.TimeoutException> timeoutException, Optional<StructuredTaskScope.FailedException> failedException, List<R> results) {
 
     }
 
@@ -169,10 +173,16 @@ public class Main {
                 }
         )) {
             Arrays.stream(callables).forEach(scope::fork);
-            return new AllSuccessfulOrThrow(name, timeout, Optional.of(scope.join().map(StructuredTaskScope.Subtask::get).toList()), Optional.empty());
-        } catch (InterruptedException | StructuredTaskScope.FailedException e) {
+            return new AllSuccessfulOrThrow(name, timeout, Optional.empty(), Optional.empty(), scope.join().map(StructuredTaskScope.Subtask::get).toList());
+        } catch (InterruptedException | StructuredTaskScope.TimeoutException | StructuredTaskScope.FailedException e) {
             throwIfInterruptedException(e);
-            return new AllSuccessfulOrThrow(name, timeout, Optional.empty(), Optional.of((StructuredTaskScope.FailedException) e));
+            if (e instanceof StructuredTaskScope.TimeoutException et) {
+                return new AllSuccessfulOrThrow(name, timeout, Optional.of(et), Optional.empty(), List.of());
+            }
+            if (e instanceof StructuredTaskScope.FailedException ef) {
+                return new AllSuccessfulOrThrow(name, timeout, Optional.empty(), Optional.of(ef), List.of());
+            }
+            return throwIfInterruptedException(e);
         }
     }
 
