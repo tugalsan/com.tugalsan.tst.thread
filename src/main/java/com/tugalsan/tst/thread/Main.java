@@ -26,6 +26,95 @@ public class Main {
         IO.println("main.done..");
     }
 
+    public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
+
+    }
+
+    public static <R> AllAwait<R> allAwait(String name, Duration timeout, Callable<R>... callables) {
+        try (var scope = StructuredTaskScope.open(Joiner.<R>awaitAll(),
+                cf -> {
+                    if (name != null) {
+                        cf.withName(name);
+                    }
+                    if (timeout != null) {
+                        cf.withTimeout(timeout);
+                    }
+                    return cf;
+                }
+        )) {
+            var subTasks = Arrays.stream(callables).map(scope::fork).toList();
+            scope.join();
+            var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).map(StructuredTaskScope.Subtask::get).toList();
+            var resultsFailedOrUnavailable = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
+            return new AllAwait(name, timeout, resultsSuccessful, resultsFailedOrUnavailable, Optional.empty());
+        } catch (InterruptedException | StructuredTaskScope.TimeoutException e) {
+            throwIfInterruptedException(e);
+            if (e instanceof StructuredTaskScope.TimeoutException et) {
+                return new AllAwait(name, timeout, List.of(), List.of(), Optional.of(et));
+            }
+            return null;
+        }
+    }
+
+    public static record AllAwaitNoType(String name, Duration timeout, List resultsSuccessful, List<StructuredTaskScope.Subtask> resultsFailed, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
+
+    }
+
+    public static AllAwaitNoType allAwaitNoType(String name, Duration timeout, Callable... callables) {
+        try (var scope = StructuredTaskScope.open(Joiner.awaitAll(),
+                cf -> {
+                    if (name != null) {
+                        cf.withName(name);
+                    }
+                    if (timeout != null) {
+                        cf.withTimeout(timeout);
+                    }
+                    return cf;
+                }
+        )) {
+            var subTasks = Arrays.stream(callables).map(scope::fork).toList();
+            scope.join();
+            var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).toList();
+            var resultsFailed = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
+            return new AllAwaitNoType(name, timeout, resultsSuccessful, resultsFailed, Optional.empty());
+        } catch (InterruptedException | StructuredTaskScope.TimeoutException e) {
+            throwIfInterruptedException(e);
+            if (e instanceof StructuredTaskScope.TimeoutException et) {
+                return new AllAwaitNoType(name, timeout, List.of(), List.of(), Optional.of(et));
+            }
+            return null;
+        }
+    }
+
+    //-------------------- INTERRUPTED EXCEPTION ----------------
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void _throwAsUncheckedException(Throwable exception) throws T {
+        throw (T) exception;
+    }
+
+    @Deprecated //only internalUse
+    private static void throwAsUncheckedException(Throwable exception) {
+        Main.<RuntimeException>_throwAsUncheckedException(exception);
+    }
+
+    public static <R> R throwIfInterruptedException(Throwable t) {
+        if (isInterruptedException(t)) {
+            Thread.currentThread().interrupt();
+            throwAsUncheckedException(t);
+        }
+        return null;
+    }
+
+    public static boolean isInterruptedException(Throwable t) {
+        if (t instanceof InterruptedException) {
+            return true;
+        }
+        if (t.getCause() != null) {
+            return isInterruptedException(t.getCause());
+        }
+        return false;
+    }
+
     public static record AnySuccessfulOrThrow<R>(String name, Duration timeout, Optional<R> result, Optional<StructuredTaskScope.FailedException> e) {
 
     }
@@ -73,91 +162,4 @@ public class Main {
             return new AllSuccessfulOrThrow(name, timeout, Optional.empty(), Optional.of((StructuredTaskScope.FailedException) e));
         }
     }
-
-    public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
-
-    }
-
-    public static <R> AllAwait<R> allAwait(String name, Duration timeout, Callable<R>... callables) {
-        try (var scope = StructuredTaskScope.open(Joiner.<R>awaitAll(),
-                cf -> {
-                    if (name != null) {
-                        cf.withName(name);
-                    }
-                    if (timeout != null) {
-                        cf.withTimeout(timeout);
-                    }
-                    return cf;
-                }
-        )) {
-            var subTasks = Arrays.stream(callables).map(scope::fork).toList();
-            scope.join();
-            var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).map(StructuredTaskScope.Subtask::get).toList();
-            var resultsFailedOrUnavailable = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
-            return new AllAwait(name, timeout, resultsSuccessful, resultsFailedOrUnavailable, Optional.empty());
-        } catch (InterruptedException | StructuredTaskScope.TimeoutException e) {
-            throwIfInterruptedException(e);
-            if (e instanceof StructuredTaskScope.TimeoutException et) {
-                return new AllAwait(name, timeout, List.of(), List.of(), Optional.of(et));
-            }
-            return null;
-        }
-    }
-
-    public static record AllAwaitNoType(String name, Duration timeout, List resultsSuccessful, List<StructuredTaskScope.Subtask> resultsFailed) {
-
-    }
-
-    public static AllAwaitNoType allAwaitNoType(String name, Duration timeout, Callable... callables) {
-        try (var scope = StructuredTaskScope.open(Joiner.awaitAll(),
-                cf -> {
-                    if (name != null) {
-                        cf.withName(name);
-                    }
-                    if (timeout != null) {
-                        cf.withTimeout(timeout);
-                    }
-                    return cf;
-                }
-        )) {
-            var subTasks = Arrays.stream(callables).map(scope::fork).toList();
-            scope.join();
-            var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).toList();
-            var resultsFailed = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
-            return new AllAwaitNoType(name, timeout, resultsSuccessful, resultsFailed);
-        } catch (InterruptedException e) {
-            throwIfInterruptedException(e);
-            return null;
-        }
-    }
-
-    //-------------------- INTERRUPTED EXCEPTION ----------------
-    @SuppressWarnings("unchecked")
-    private static <T extends Throwable> void _throwAsUncheckedException(Throwable exception) throws T {
-        throw (T) exception;
-    }
-
-    @Deprecated //only internalUse
-    private static void throwAsUncheckedException(Throwable exception) {
-        Main.<RuntimeException>_throwAsUncheckedException(exception);
-    }
-
-    public static <R> R throwIfInterruptedException(Throwable t) {
-        if (isInterruptedException(t)) {
-            Thread.currentThread().interrupt();
-            throwAsUncheckedException(t);
-        }
-        return null;
-    }
-
-    public static boolean isInterruptedException(Throwable t) {
-        if (t instanceof InterruptedException) {
-            return true;
-        }
-        if (t.getCause() != null) {
-            return isInterruptedException(t.getCause());
-        }
-        return false;
-    }
-
 }
