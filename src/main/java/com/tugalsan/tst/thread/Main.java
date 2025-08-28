@@ -9,6 +9,29 @@ import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Joiner;
 import java.util.concurrent.StructuredTaskScope.Subtask.State;
 
+/*
+
+main.begin..
+AllAwait[name=allAwait_success, timeout=PT10S, timeoutException=Optional.empty, resultsSuccessful=[task 5 secs string finished, task 6 secs string finished], resultsFailedOrUnavailable=[]]
+AllAwait[name=allAwait_timeout1, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsSuccessful=[], resultsFailedOrUnavailable=[]]
+AllAwait[name=allAwait_throw, timeout=PT10S, timeoutException=Optional.empty, resultsSuccessful=[task 5 secs string finished], resultsFailedOrUnavailable=[java.util.concurrent.StructuredTaskScopeImpl$SubtaskImpl@378bf509[Failed: java.lang.RuntimeException: task 3 secs string throwing]]]
+AllAwait[name=allAwait_timeout2, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsSuccessful=[], resultsFailedOrUnavailable=[]]
+AllAwaitNoType[name=allAwaitNoType_success, timeout=PT10S, timeoutException=Optional.empty, resultsFailed=[], resultsSuccessful=[4, task 6 secs string finished]]
+AllAwaitNoType[name=allAwaitNoType_timeout1, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsFailed=[], resultsSuccessful=[]]
+AllAwaitNoType[name=allAwaitNoType_throw, timeout=PT10S, timeoutException=Optional.empty, resultsFailed=[java.util.concurrent.StructuredTaskScopeImpl$SubtaskImpl@15aeb7ab[Failed: java.lang.RuntimeException: task 3 secs string throwing]], resultsSuccessful=[4]]
+AllAwaitNoType[name=allAwaitNoType_timeout2, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsFailed=[], resultsSuccessful=[]]
+AnySuccessfulOrThrow[name=anySuccessfulOrThrow_success, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional.empty, result=Optional[task 5 secs string finished]]
+AnySuccessfulOrThrow[name=anySuccessfulOrThrow_timeout1, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, result=Optional.empty]
+AnySuccessfulOrThrow[name=anySuccessfulOrThrow_throw, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional.empty, result=Optional[task 5 secs string finished]]
+AnySuccessfulOrThrow[name=anySuccessfulOrThrow_timeout2, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, result=Optional.empty]
+AllSuccessfulOrThrow[name=allSuccessfulOrThrow_success, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional.empty, results=[task 5 secs string finished, task 6 secs string finished]]
+AllSuccessfulOrThrow[name=allSuccessfulOrThrow_timeout1, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, results=[]]
+AllSuccessfulOrThrow[name=allSuccessfulOrThrow_throw, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional[java.util.concurrent.StructuredTaskScope$FailedException: java.lang.RuntimeException: task 3 secs string throwing], results=[]]
+AllSuccessfulOrThrow[name=allSuccessfulOrThrow_timeout2, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, results=[]]
+main.done..
+
+*/
+
 public class Main {
 
 //    private static final TS_Log d = TS_Log.of(true, Main.class);
