@@ -44,14 +44,13 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
                 <configuration>
-                    <release>25</release><!--prop.jdk-->
+                    <release>25</release>
                     <enablePreview>true</enablePreview>
-                    <!--<compilerArgs>
-                        <arg>- -add-modules</arg>
-                        <arg>jdk.incubator.vector</arg>
-                    </compilerArgs>-->
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
                 </configuration>
-            </plugin>    
+            </plugin>
         </plugins>
     </build>
 </project>

@@ -67,14 +67,14 @@ public class Main {
                 }
         )) {
             Arrays.stream(callables).forEach(scope::fork);
-            return new AllSuccessfulOrThrow(name, timeout, Optional.of(scope.join().map(c -> c.get()).toList()), Optional.empty());
+            return new AllSuccessfulOrThrow(name, timeout, Optional.of(scope.join().map(StructuredTaskScope.Subtask::get).toList()), Optional.empty());
         } catch (InterruptedException | StructuredTaskScope.FailedException e) {
             throwIfInterruptedException(e);
             return new AllSuccessfulOrThrow(name, timeout, Optional.empty(), Optional.of((StructuredTaskScope.FailedException) e));
         }
     }
 
-    public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable) {
+    public static record AllAwait<R>(String name, Duration timeout, List<R> resultsSuccessful, List<StructuredTaskScope.Subtask<R>> resultsFailedOrUnavailable, Optional<StructuredTaskScope.TimeoutException> timeoutException) {
 
     }
 
@@ -92,11 +92,14 @@ public class Main {
         )) {
             var subTasks = Arrays.stream(callables).map(scope::fork).toList();
             scope.join();
-            var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).toList();
+            var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).map(StructuredTaskScope.Subtask::get).toList();
             var resultsFailedOrUnavailable = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
-            return new AllAwait(name, timeout, resultsSuccessful, resultsFailedOrUnavailable);
-        } catch (InterruptedException e) {
+            return new AllAwait(name, timeout, resultsSuccessful, resultsFailedOrUnavailable, Optional.empty());
+        } catch (InterruptedException | StructuredTaskScope.TimeoutException e) {
             throwIfInterruptedException(e);
+            if (e instanceof StructuredTaskScope.TimeoutException et) {
+                return new AllAwait(name, timeout, List.of(), List.of(), Optional.of(et));
+            }
             return null;
         }
     }
