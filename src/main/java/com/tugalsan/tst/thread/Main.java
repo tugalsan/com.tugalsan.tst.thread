@@ -36,10 +36,10 @@ public class Main {
                     if (name != null && timeout != null) {
                         return cf.withName(name).withTimeout(timeout);
                     }
-                    if (name == null && timeout != null) {
+                    if (timeout != null) {
                         return cf.withTimeout(timeout);
                     }
-                    if (name != null && timeout == null) {
+                    if (name != null) {
                         return cf.withName(name);
                     }
                     return cf;
@@ -69,10 +69,10 @@ public class Main {
                     if (name != null && timeout != null) {
                         return cf.withName(name).withTimeout(timeout);
                     }
-                    if (name == null && timeout != null) {
+                    if (timeout != null) {
                         return cf.withTimeout(timeout);
                     }
-                    if (name != null && timeout == null) {
+                    if (name != null) {
                         return cf.withName(name);
                     }
                     return cf;
@@ -121,7 +121,7 @@ public class Main {
         return false;
     }
 
-    public static record AnySuccessfulOrThrow<R>(String name, Duration timeout, Optional<R> result, Optional<StructuredTaskScope.FailedException> e) {
+    public static record AnySuccessfulOrThrow<R>(String name, Duration timeout, Optional<R> result, Optional<StructuredTaskScope.FailedException> failedException) {
 
     }
 
@@ -131,10 +131,10 @@ public class Main {
                     if (name != null && timeout != null) {
                         return cf.withName(name).withTimeout(timeout);
                     }
-                    if (name == null && timeout != null) {
+                    if (timeout != null) {
                         return cf.withTimeout(timeout);
                     }
-                    if (name != null && timeout == null) {
+                    if (name != null) {
                         return cf.withName(name);
                     }
                     return cf;
@@ -148,7 +148,7 @@ public class Main {
         }
     }
 
-    public static record AllSuccessfulOrThrow<R>(String name, Duration timeout, Optional<List<R>> results, Optional<StructuredTaskScope.FailedException> e) {
+    public static record AllSuccessfulOrThrow<R>(String name, Duration timeout, Optional<List<R>> results, Optional<StructuredTaskScope.FailedException> failedException) {
 
     }
 
@@ -158,10 +158,10 @@ public class Main {
                     if (name != null && timeout != null) {
                         return cf.withName(name).withTimeout(timeout);
                     }
-                    if (name == null && timeout != null) {
+                    if (timeout != null) {
                         return cf.withTimeout(timeout);
                     }
-                    if (name != null && timeout == null) {
+                    if (name != null) {
                         return cf.withName(name);
                     }
                     return cf;
