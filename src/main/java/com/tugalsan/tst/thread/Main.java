@@ -74,7 +74,7 @@ public class Main {
         )) {
             var subTasks = Arrays.stream(callables).map(scope::fork).toList();
             scope.join();
-            var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).toList();
+            var resultsSuccessful = subTasks.stream().filter(st -> st.state() == State.SUCCESS).map(StructuredTaskScope.Subtask::get).toList();
             var resultsFailed = subTasks.stream().filter(st -> st.state() == State.FAILED || st.state() == State.UNAVAILABLE).toList();
             return new AllAwaitNoType(name, timeout, resultsSuccessful, resultsFailed, Optional.empty());
         } catch (InterruptedException | StructuredTaskScope.TimeoutException e) {
