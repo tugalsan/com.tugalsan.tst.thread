@@ -20,18 +20,22 @@ public class Main {
             Thread.sleep(Duration.ofSeconds(5));
             return "job finished";
         };
+        Callable<String> throwingTask = () -> {
+            Thread.sleep(Duration.ofSeconds(5));
+            throw new RuntimeException("job error");
+        };
         IO.println("main.begin..");
-        allAwait_tst_success(fiveSecsTask);//TODO
-//        allAwait_tst_throw(fiveSecsTask);//TODO
+//        allAwait_tst_success(fiveSecsTask);//OK
+        allAwait_tst_throw(throwingTask);//TODO
 //        allAwait_tst_timeout(fiveSecsTask);//TODO
 //        allAwaitNoType_tst_success(fiveSecsTask);//TODO
-//        allAwaitNoType_tst_throw(fiveSecsTask);//TODO
+//        allAwaitNoType_tst_throw(throwingTask);//TODO
 //        allAwaitNoType_tst_timeout(fiveSecsTask);//TODO
 //        anySuccessfulOrThrow_tst_success(fiveSecsTask);//TODO
-//        anySuccessfulOrThrow_tst_throw(fiveSecsTask);//TODO
+//        anySuccessfulOrThrow_tst_throw(throwingTask);//TODO
 //        anySuccessfulOrThrow_tst_timeout(fiveSecsTask);//TODO
 //        allSuccessfulOrThrow_tst_success(fiveSecsTask);//TODO
-//        allSuccessfulOrThrow_tst_throw(fiveSecsTask);//TODO
+//        allSuccessfulOrThrow_tst_throw(throwingTask);//TODO
 //        allSuccessfulOrThrow_tst_timeout(fiveSecsTask);//TODO
         IO.println("main.done..");
     }
@@ -43,7 +47,7 @@ public class Main {
     }
 
     private static void allAwait_tst_throw(Callable<String> fiveSecsTask) {
-        var allAwait = allAwait("allAwait_tst_throw", Duration.ofSeconds(2), fiveSecsTask);
+        var allAwait = allAwait("allAwait_tst_success", Duration.ofSeconds(10), fiveSecsTask);
         allAwait.resultsSuccessful().forEach(IO::println);
     }
 
