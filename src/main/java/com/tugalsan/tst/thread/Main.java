@@ -33,11 +33,14 @@ public class Main {
     public static <R> AllAwait<R> allAwait(String name, Duration timeout, Callable<R>... callables) {
         try (var scope = StructuredTaskScope.open(Joiner.<R>awaitAll(),
                 cf -> {
-                    if (name != null) {
-                        cf.withName(name);
+                    if (name != null && timeout != null) {
+                        return cf.withName(name).withTimeout(timeout);
                     }
-                    if (timeout != null) {
-                        cf.withTimeout(timeout);
+                    if (name == null && timeout != null) {
+                        return cf.withTimeout(timeout);
+                    }
+                    if (name != null && timeout == null) {
+                        return cf.withName(name);
                     }
                     return cf;
                 }
@@ -63,11 +66,14 @@ public class Main {
     public static AllAwaitNoType allAwaitNoType(String name, Duration timeout, Callable... callables) {
         try (var scope = StructuredTaskScope.open(Joiner.awaitAll(),
                 cf -> {
-                    if (name != null) {
-                        cf.withName(name);
+                    if (name != null && timeout != null) {
+                        return cf.withName(name).withTimeout(timeout);
                     }
-                    if (timeout != null) {
-                        cf.withTimeout(timeout);
+                    if (name == null && timeout != null) {
+                        return cf.withTimeout(timeout);
+                    }
+                    if (name != null && timeout == null) {
+                        return cf.withName(name);
                     }
                     return cf;
                 }
@@ -122,11 +128,14 @@ public class Main {
     public static <R> AnySuccessfulOrThrow<R> anySuccessfulOrThrow(String name, Duration timeout, Callable<R>... callables) {
         try (var scope = StructuredTaskScope.open(Joiner.<R>anySuccessfulResultOrThrow(),
                 cf -> {
-                    if (name != null) {
-                        cf.withName(name);
+                    if (name != null && timeout != null) {
+                        return cf.withName(name).withTimeout(timeout);
                     }
-                    if (timeout != null) {
-                        cf.withTimeout(timeout);
+                    if (name == null && timeout != null) {
+                        return cf.withTimeout(timeout);
+                    }
+                    if (name != null && timeout == null) {
+                        return cf.withName(name);
                     }
                     return cf;
                 }
@@ -146,11 +155,14 @@ public class Main {
     public static <R> AllSuccessfulOrThrow<List<R>> allSuccessfulOrThrow(String name, Duration timeout, Callable<R>... callables) {
         try (var scope = StructuredTaskScope.open(Joiner.<R>allSuccessfulOrThrow(),
                 cf -> {
-                    if (name != null) {
-                        cf.withName(name);
+                    if (name != null && timeout != null) {
+                        return cf.withName(name).withTimeout(timeout);
                     }
-                    if (timeout != null) {
-                        cf.withTimeout(timeout);
+                    if (name == null && timeout != null) {
+                        return cf.withTimeout(timeout);
+                    }
+                    if (name != null && timeout == null) {
+                        return cf.withName(name);
                     }
                     return cf;
                 }
