@@ -21,16 +21,29 @@ public class Main {
             return "job finished";
         };
         IO.println("main.begin..");
-        //allAwait_tst(fiveSecsTask);
-        //allAwait_tst_timeout(fiveSecsTask);
-        //allAwaitNoType_tst_timeout(fiveSecsTask);
-        //allAwait_tst_timeout(fiveSecsTask);
+        allAwait_tst_success(fiveSecsTask);//TODO
+        allAwait_tst_throw(fiveSecsTask);//TODO
+        allAwait_tst_timeout(fiveSecsTask);//TODO
+        allAwaitNoType_tst_success(fiveSecsTask);//TODO
+        allAwaitNoType_tst_throw(fiveSecsTask);//TODO
+        allAwaitNoType_tst_timeout(fiveSecsTask);//TODO
+        anySuccessfulOrThrow_tst_success(fiveSecsTask);//TODO
+        anySuccessfulOrThrow_tst_throw(fiveSecsTask);//TODO
+        anySuccessfulOrThrow_tst_timeout(fiveSecsTask);//TODO
+        allSuccessfulOrThrow_tst_success(fiveSecsTask);//TODO
+        allSuccessfulOrThrow_tst_throw(fiveSecsTask);//TODO
+        allSuccessfulOrThrow_tst_timeout(fiveSecsTask);//TODO
         IO.println("main.done..");
     }
 
     //--------------------------- TESTS ----------------------------
-    private static void allAwait_tst(Callable<String> fiveSecsTask) {
+    private static void allAwait_tst_success(Callable<String> fiveSecsTask) {
         var allAwait = allAwait("allAwait", Duration.ofSeconds(10), fiveSecsTask);
+        allAwait.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void allAwait_tst_throw(Callable<String> fiveSecsTask) {
+        var allAwait = allAwait("allAwait", Duration.ofSeconds(2), fiveSecsTask);
         allAwait.resultsSuccessful().forEach(IO::println);
     }
 
@@ -39,12 +52,47 @@ public class Main {
         allAwait.resultsSuccessful().forEach(IO::println);
     }
 
-    private static void allAwaitNoType_tst(Callable<String> fiveSecsTask) {
+    private static void allAwaitNoType_tst_success(Callable<String> fiveSecsTask) {
+        var allAwaitNoType = allAwaitNoType("allAwaitNoType", Duration.ofSeconds(10), fiveSecsTask);
+        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void allAwaitNoType_tst_throw(Callable<String> fiveSecsTask) {
         var allAwaitNoType = allAwaitNoType("allAwaitNoType", Duration.ofSeconds(10), fiveSecsTask);
         allAwaitNoType.resultsSuccessful().forEach(IO::println);
     }
 
     private static void allAwaitNoType_tst_timeout(Callable<String> fiveSecsTask) {
+        var allAwaitNoType = allAwaitNoType("allAwait", Duration.ofSeconds(2), fiveSecsTask);
+        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void anySuccessfulOrThrow_tst_success(Callable<String> fiveSecsTask) {
+        var allAwaitNoType = allAwaitNoType("allAwait", Duration.ofSeconds(2), fiveSecsTask);
+        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void anySuccessfulOrThrow_tst_throw(Callable<String> fiveSecsTask) {
+        var allAwaitNoType = allAwaitNoType("allAwait", Duration.ofSeconds(2), fiveSecsTask);
+        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void anySuccessfulOrThrow_tst_timeout(Callable<String> fiveSecsTask) {
+        var allAwaitNoType = allAwaitNoType("allAwait", Duration.ofSeconds(2), fiveSecsTask);
+        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void allSuccessfulOrThrow_tst_success(Callable<String> fiveSecsTask) {
+        var allAwaitNoType = allAwaitNoType("allAwait", Duration.ofSeconds(2), fiveSecsTask);
+        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void allSuccessfulOrThrow_tst_throw(Callable<String> fiveSecsTask) {
+        var allAwaitNoType = allAwaitNoType("allAwait", Duration.ofSeconds(2), fiveSecsTask);
+        allAwaitNoType.resultsSuccessful().forEach(IO::println);
+    }
+
+    private static void allSuccessfulOrThrow_tst_timeout(Callable<String> fiveSecsTask) {
         var allAwaitNoType = allAwaitNoType("allAwait", Duration.ofSeconds(2), fiveSecsTask);
         allAwaitNoType.resultsSuccessful().forEach(IO::println);
     }
