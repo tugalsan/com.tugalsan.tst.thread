@@ -7,6 +7,7 @@ import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncWait;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 /*
 
@@ -33,6 +34,16 @@ public class Main {
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
         var killTrigger = TS_ThreadSyncTrigger.of("main");
+
+        TGS_FuncMTU_OutTyped_In1<Void, TS_ThreadSyncTrigger> threeSecsVoidThrowingTask = kt -> {
+            TS_ThreadSyncWait.seconds("wait", kt, 3);
+            return null;
+        };
+        IO.println(TS_ThreadAsyncAwaitCore.anySuccessfulOrThrow(killTrigger.newChild("allSuccessfulOrThrow_timeout2"), Duration.ofSeconds(2), List.of(threeSecsVoidThrowingTask)));
+        if (true) {
+            return;
+        }
+
         TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger> threeSecsStringThrowingTask = kt -> {
             TS_ThreadSyncWait.seconds("wait", kt, 3);
             throw new RuntimeException("task 3 secs string throwing");
@@ -71,7 +82,5 @@ public class Main {
         IO.println(TS_ThreadAsyncAwait.callParallel(killTrigger.newChild("callParallel.arr"), Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
         IO.println(TS_ThreadAsyncAwait.callParallelRateLimited(killTrigger.newChild("callParallelRateLimited.lst"), 1, Duration.ofSeconds(10), List.of(fiveSecsStringTask, sixSecsStringTask)));
         IO.println(TS_ThreadAsyncAwait.callParallelRateLimited(killTrigger.newChild("callParallelRateLimited.arr"), 1, Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
-        IO.println(TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger.newChild("callParallel.arr.1"), 1, Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
-        IO.println(TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger.newChild("callParallel.arr.1"), 1, Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
     }
 }
