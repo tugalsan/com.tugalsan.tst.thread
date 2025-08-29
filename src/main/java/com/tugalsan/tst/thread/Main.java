@@ -5,31 +5,23 @@ import com.tugalsan.api.thread.server.async.await.core.TS_ThreadAsyncAwaitCore;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncWait;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 
 /*
 
 main.begin..
-AllAwait[name=allAwait_success, timeout=PT10S, timeoutException=Optional.empty, resultsSuccessful=[task 5 secs string finished, task 6 secs string finished], resultsFailedOrUnavailable=[]]
-AllAwait[name=allAwait_timeout1, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsSuccessful=[], resultsFailedOrUnavailable=[]]
-AllAwait[name=allAwait_throw, timeout=PT10S, timeoutException=Optional.empty, resultsSuccessful=[task 5 secs string finished], resultsFailedOrUnavailable=[java.util.concurrent.StructuredTaskScopeImpl$SubtaskImpl@378bf509[Failed: java.lang.RuntimeException: task 3 secs string throwing]]]
-AllAwait[name=allAwait_timeout2, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsSuccessful=[], resultsFailedOrUnavailable=[]]
-
-AllAwaitNoType[name=allAwaitNoType_success, timeout=PT10S, timeoutException=Optional.empty, resultsFailed=[], resultsSuccessful=[4, task 6 secs string finished]]
-AllAwaitNoType[name=allAwaitNoType_timeout1, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsFailed=[], resultsSuccessful=[]]
-AllAwaitNoType[name=allAwaitNoType_throw, timeout=PT10S, timeoutException=Optional.empty, resultsFailed=[java.util.concurrent.StructuredTaskScopeImpl$SubtaskImpl@15aeb7ab[Failed: java.lang.RuntimeException: task 3 secs string throwing]], resultsSuccessful=[4]]
-AllAwaitNoType[name=allAwaitNoType_timeout2, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsFailed=[], resultsSuccessful=[]]
-
-AnySuccessfulOrThrow[name=anySuccessfulOrThrow_success, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional.empty, result=Optional[task 5 secs string finished]]
-AnySuccessfulOrThrow[name=anySuccessfulOrThrow_timeout1, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, result=Optional.empty]
-AnySuccessfulOrThrow[name=anySuccessfulOrThrow_throw, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional.empty, result=Optional[task 5 secs string finished]]
-AnySuccessfulOrThrow[name=anySuccessfulOrThrow_timeout2, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, result=Optional.empty]
-
-AllSuccessfulOrThrow[name=allSuccessfulOrThrow_success, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional.empty, results=[task 5 secs string finished, task 6 secs string finished]]
-AllSuccessfulOrThrow[name=allSuccessfulOrThrow_timeout1, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, results=[]]
-AllSuccessfulOrThrow[name=allSuccessfulOrThrow_throw, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional[java.util.concurrent.StructuredTaskScope$FailedException: java.lang.RuntimeException: task 3 secs string throwing], results=[]]
-AllSuccessfulOrThrow[name=allSuccessfulOrThrow_timeout2, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, results=[]]
+AllAwait[killTrigger=TS_ThreadSyncTrigger{name=main>allAwait_success, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@37bba400, value=false}, timeout=PT10S, timeoutException=Optional.empty, resultsFailedOrUnavailable=[], resultsSuccessful=[task 5 secs string finished, task 6 secs string finished]]
+AllAwait[killTrigger=TS_ThreadSyncTrigger{name=main>allAwait_timeout1, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@37f8bb67, value=true}, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsFailedOrUnavailable=[], resultsSuccessful=[]]
+AllAwait[killTrigger=TS_ThreadSyncTrigger{name=main>allAwait_throw, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@49c2faae, value=false}, timeout=PT10S, timeoutException=Optional.empty, resultsFailedOrUnavailable=[java.util.concurrent.StructuredTaskScopeImpl$SubtaskImpl@31cefde0[Failed: java.lang.RuntimeException: task 3 secs string throwing]], resultsSuccessful=[task 5 secs string finished]]
+AllAwait[killTrigger=TS_ThreadSyncTrigger{name=main>allAwait_timeout2, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@439f5b3d, value=true}, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], resultsFailedOrUnavailable=[], resultsSuccessful=[]]
+AnySuccessfulOrThrow[killTrigger=TS_ThreadSyncTrigger{name=main>anySuccessfulOrThrow_success, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@26a1ab54, value=false}, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional.empty, result=Optional[task 5 secs string finished]]
+AnySuccessfulOrThrow[killTrigger=TS_ThreadSyncTrigger{name=main>anySuccessfulOrThrow_timeout1, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@3d646c37, value=true}, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, result=Optional.empty]
+AnySuccessfulOrThrow[killTrigger=TS_ThreadSyncTrigger{name=main>anySuccessfulOrThrow_throw, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@41cf53f9, value=false}, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional.empty, result=Optional[task 5 secs string finished]]
+AnySuccessfulOrThrow[killTrigger=TS_ThreadSyncTrigger{name=main>anySuccessfulOrThrow_timeout2, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@5a10411, value=true}, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, result=Optional.empty]
+AllSuccessfulOrThrow[killTrigger=TS_ThreadSyncTrigger{name=main>allSuccessfulOrThrow_success, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@5ce65a89, value=false}, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional.empty, results=[task 5 secs string finished, task 6 secs string finished]]
+AllSuccessfulOrThrow[killTrigger=TS_ThreadSyncTrigger{name=main>allSuccessfulOrThrow_timeout1, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@25f38edc, value=true}, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, results=[]]
+AllSuccessfulOrThrow[killTrigger=TS_ThreadSyncTrigger{name=main>allSuccessfulOrThrow_throw, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@3eb07fd3, value=true}, timeout=PT10S, timeoutException=Optional.empty, failedException=Optional[java.util.concurrent.StructuredTaskScope$FailedException: java.lang.RuntimeException: task 3 secs string throwing], results=[]]
+AllSuccessfulOrThrow[killTrigger=TS_ThreadSyncTrigger{name=main>allSuccessfulOrThrow_timeout2, parents=com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst@506c589e, value=true}, timeout=PT2S, timeoutException=Optional[java.util.concurrent.StructuredTaskScope$TimeoutException], failedException=Optional.empty, results=[]]
 main.done..
 
  */
