@@ -1,6 +1,7 @@
 package com.tugalsan.tst.thread;
 
 import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTU_OutTyped_In1;
+import com.tugalsan.api.thread.server.async.await.TS_ThreadAsyncAwait;
 import com.tugalsan.api.thread.server.async.await.core.TS_ThreadAsyncAwaitCore;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncWait;
@@ -35,7 +36,7 @@ public class Main {
         TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger> threeSecsStringThrowingTask = kt -> {
             TS_ThreadSyncWait.seconds("wait", kt, 3);
             throw new RuntimeException("task 3 secs string throwing");
-        };       
+        };
         TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger> fiveSecsStringTask = kt -> {
             TS_ThreadSyncWait.seconds("wait", kt, 5);
             return "task 5 secs string finished";
@@ -45,7 +46,12 @@ public class Main {
             return "task 6 secs string finished";
         };
         IO.println("main.begin..");
+        //core(killTrigger, threeSecsStringThrowingTask, fiveSecsStringTask, sixSecsStringTask);
+        decorated(killTrigger, threeSecsStringThrowingTask, fiveSecsStringTask, sixSecsStringTask);
+        IO.println("main.done..");
+    }
 
+    private static void core(TS_ThreadSyncTrigger killTrigger, TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger> threeSecsStringThrowingTask, TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger> fiveSecsStringTask, TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger> sixSecsStringTask) {
         IO.println(TS_ThreadAsyncAwaitCore.allAwait(killTrigger.newChild("allAwait_success"), Duration.ofSeconds(10), List.of(fiveSecsStringTask, sixSecsStringTask)));
         IO.println(TS_ThreadAsyncAwaitCore.allAwait(killTrigger.newChild("allAwait_timeout1"), Duration.ofSeconds(2), List.of(fiveSecsStringTask, sixSecsStringTask)));
         IO.println(TS_ThreadAsyncAwaitCore.allAwait(killTrigger.newChild("allAwait_throw"), Duration.ofSeconds(10), List.of(threeSecsStringThrowingTask, fiveSecsStringTask)));
@@ -58,6 +64,14 @@ public class Main {
         IO.println(TS_ThreadAsyncAwaitCore.allSuccessfulOrThrow(killTrigger.newChild("allSuccessfulOrThrow_timeout1"), Duration.ofSeconds(2), List.of(fiveSecsStringTask, sixSecsStringTask)));
         IO.println(TS_ThreadAsyncAwaitCore.allSuccessfulOrThrow(killTrigger.newChild("allSuccessfulOrThrow_throw"), Duration.ofSeconds(10), List.of(threeSecsStringThrowingTask, fiveSecsStringTask)));
         IO.println(TS_ThreadAsyncAwaitCore.allSuccessfulOrThrow(killTrigger.newChild("allSuccessfulOrThrow_timeout2"), Duration.ofSeconds(2), List.of(threeSecsStringThrowingTask, fiveSecsStringTask)));
-        IO.println("main.done..");
+    }
+
+    private static void decorated(TS_ThreadSyncTrigger killTrigger, TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger> threeSecsStringThrowingTask, TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger> fiveSecsStringTask, TGS_FuncMTU_OutTyped_In1<String, TS_ThreadSyncTrigger> sixSecsStringTask) {
+        IO.println(TS_ThreadAsyncAwait.callParallel(killTrigger.newChild("callParallel.lst"), Duration.ofSeconds(10), List.of(fiveSecsStringTask, sixSecsStringTask)));
+        IO.println(TS_ThreadAsyncAwait.callParallel(killTrigger.newChild("callParallel.arr"), Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
+        IO.println(TS_ThreadAsyncAwait.callParallelRateLimited(killTrigger.newChild("callParallelRateLimited.lst"), 1, Duration.ofSeconds(10), List.of(fiveSecsStringTask, sixSecsStringTask)));
+        IO.println(TS_ThreadAsyncAwait.callParallelRateLimited(killTrigger.newChild("callParallelRateLimited.arr"), 1, Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
+        IO.println(TS_ThreadAsyncAwait.callParallelUntilFirstFail(killTrigger.newChild("callParallel.arr.1"), 1, Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
+        IO.println(TS_ThreadAsyncAwait.callParallelUntilFirstSuccess(killTrigger.newChild("callParallel.arr.1"), 1, Duration.ofSeconds(10), fiveSecsStringTask, sixSecsStringTask));
     }
 }
