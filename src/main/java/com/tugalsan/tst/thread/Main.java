@@ -7,7 +7,7 @@ import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncWait;
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Supplier;
 
 /*
 
@@ -40,6 +40,7 @@ public class Main {
             return null;
         };
         IO.println(TS_ThreadAsyncAwaitCore.anySuccessfulOrThrow(killTrigger.newChild("allSuccessfulOrThrow_timeout2"), Duration.ofSeconds(2), List.of(threeSecsVoidThrowingTask)));
+        IO.println(TS_ThreadAsyncAwaitCore.anySuccessfulOrThrow(killTrigger.newChild("allSuccessfulOrThrow_success"), Duration.ofSeconds(10), List.of(threeSecsVoidThrowingTask)));
         if (true) {
             return;
         }
