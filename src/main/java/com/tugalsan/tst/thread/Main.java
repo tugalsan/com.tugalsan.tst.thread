@@ -1,10 +1,12 @@
 package com.tugalsan.tst.thread;
 
 import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTU_OutTyped_In1;
+import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.thread.server.async.await.TS_ThreadAsyncAwait;
 import com.tugalsan.api.thread.server.async.await.core.TS_ThreadAsyncAwaitCore;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncWait;
+import com.tugalsan.api.time.client.TGS_Time;
 import java.time.Duration;
 import java.util.List;
 import java.util.function.Supplier;
@@ -29,11 +31,21 @@ main.done..
  */
 public class Main {
 
-//    private static final TS_Log d = TS_Log.of(true, Main.class);
+    final private static Supplier<TS_Log> d = StableValue.supplier(() -> TS_Log.of(Main.class));
+
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
     public static void main(String... s) {
         var killTrigger = TS_ThreadSyncTrigger.of("main");
+
+        var entry = TGS_Time.ofDate_D_M_Y("08.09.2025");
+        var dispatch = TGS_Time.ofDate_D_M_Y("09.09.2025");
+        var dayDiff0 = entry.dayDifference(dispatch);
+        var dayDiff1 = dispatch.dayDifference(entry);
+        d.get().cr("main", dayDiff0, dayDiff1);
+        if (true) {
+            return;
+        }
 
         TGS_FuncMTU_OutTyped_In1<Void, TS_ThreadSyncTrigger> threeSecsVoidThrowingTask = kt -> {
             TS_ThreadSyncWait.seconds("wait", kt, 3);
