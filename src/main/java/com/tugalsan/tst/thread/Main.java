@@ -9,7 +9,6 @@ import com.tugalsan.api.thread.server.sync.TS_ThreadSyncWait;
 import com.tugalsan.api.time.client.TGS_Time;
 import java.time.Duration;
 import java.util.List;
-import java.util.function.Supplier;
 
 /*
 
@@ -31,7 +30,7 @@ main.done..
  */
 public class Main {
 
-    final private static Supplier<TS_Log> d = StableValue.supplier(() -> TS_Log.of(Main.class));
+    final private static TS_Log d = TS_Log.of(Main.class);
 
     //cd C:\me\codes\com.tugalsan\tst\com.tugalsan.tst.thread
     //java --enable-preview --add-modules jdk.incubator.vector -jar target/com.tugalsan.tst.thread-1.0-SNAPSHOT-jar-with-dependencies.jar
@@ -42,7 +41,7 @@ public class Main {
         var dispatch = TGS_Time.ofDate_D_M_Y("09.09.2025");
         var dayDiff0 = entry.dayDifference(dispatch);
         var dayDiff1 = dispatch.dayDifference(entry);
-        d.get().cr("main", dayDiff0, dayDiff1);
+        d.cr("main", dayDiff0, dayDiff1);
         if (true) {
             return;
         }
